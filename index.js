@@ -27,7 +27,7 @@ const timestamp= Math.round((new Date).getTime()/1000);
 
 
 app.post('/upload',async(req,res)=>{
-// all 
+// all database logic is here to upload data
 })
 
 app.listen(4000,()=>{
