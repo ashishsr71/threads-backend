@@ -4,11 +4,20 @@ const cors=require('cors')
 const mongoose =require('mongoose')
 const {Story,Notification,Post,Comment}= require('./modals/modals')
 const bodyParser = require('body-parser')
+const {auth}= require('./middlewares/auth');
+const {Login} = require('../')
+
+
+
+
+
 
 const app  = express();
+
+// global midddlewares
 app.use(express.json());
 app.use(bodyParser.json())
-
+app.use(cors());
 
 
 cloudinary.config({
@@ -18,9 +27,9 @@ cloudinary.config({
     secure:true
 });
 
-app.use(cors());
 
-app.get('/getsignature',async(req,res)=>{
+
+app.get('/getsignature',auth,async(req,res)=>{
 
 const timestamp= Math.round((new Date).getTime()/1000);
     try {
@@ -34,13 +43,13 @@ const timestamp= Math.round((new Date).getTime()/1000);
 
 
 
-app.post('/upload',async(req,res)=>{
+app.post('/upload',auth,async(req,res)=>{
     console.log(req.body)
-    const{secure_url}=req.body;
+    const video=req.body;
     try {
         const doc=await Post.create({
-            userId:1321321,
-            video:{secure_url}
+            userId:req.userId,
+            video:video
             
         });
         res.json(doc)
@@ -50,6 +59,10 @@ app.post('/upload',async(req,res)=>{
 
 
 })
+
+app.post('/user',)
+
+
 
 async function main() {
     await mongoose.connect('mongodb+srv://ashishsr71:Daksh2015@cluster0.g0atuug.mongodb.net/threads')

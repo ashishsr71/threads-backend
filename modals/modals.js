@@ -19,14 +19,23 @@ const commentSchema = new Schema({});
 // this is notification schema
 const notificationSchema = new Schema({});
 
+// this is userschema
+const userSchema= new Schema({
+  username:{type:String,required:true},
+  email:{type:String,required:true},
+  password:{type:String,required:true}
+});
 
 
+
+// modals here
+const User= mongoose.model('User',userSchema);
 const Story= mongoose.model('Story',storySchema);
 const Post= mongoose.model('Post',postSchema);
 const Comment= mongoose.model('Comment',commentSchema)
 const Notification = mongoose.model('Notification',notificationSchema);
 
-module.exports = {Story,Comment,Post,Notification};
+module.exports = {Story,Comment,Post,Notification,User};
 
 
 
