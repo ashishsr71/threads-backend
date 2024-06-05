@@ -5,8 +5,8 @@ const mongoose =require('mongoose')
 const {Story,Notification,Post,Comment}= require('./modals/modals')
 const bodyParser = require('body-parser')
 const {auth}= require('./middlewares/auth');
-const {Login} = require('../')
-
+const router=require('./routes/signup')
+const {Signup}= require('./controllers/user')
 
 
 
@@ -58,9 +58,9 @@ app.post('/upload',auth,async(req,res)=>{
     }
 
 
-})
+});
 
-app.post('/user',)
+app.use('/user',router);
 
 
 
