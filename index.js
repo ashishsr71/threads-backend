@@ -67,6 +67,18 @@ app.use('/user',addStoryRouter);
 app.use('/user',router);
 app.use('/user',loginrouter);
 
+// create a post route
+// create a follower route
+// create comment route
+// create a like unlike route
+// create a follow unfollow route
+// create a 
+
+
+
+
+
+
 
 // the database connection
 async function main() {
