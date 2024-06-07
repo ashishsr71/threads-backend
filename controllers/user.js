@@ -36,5 +36,42 @@ try {
 
 
  };
+
+//  the login function
+const Login=async(req,res)=>{
+    const {username,email,password}= req.body;
+    try {
+        if(!username || !password){
+            return res.status(401).json({message:'invalid credential'})
+        };
+        
+        const user = await User.findOne({username});
+        // console.log(user)
+        if(!user){
+            return res.status(401).json({message:'invalid'});
+        };
+        
+        const match = await bcrypt.compare(password,user.password);
+        if(!match){
+            return res.status(401).json({message:'invalidc'})
+        };
+        const token = jwt.sign({userId:user._id},"jai baba sawath nath",{expiresIn:"1d"});
+        res.status(200).json({token});
+        
+    } catch (error) {
+        res.status(500).json(error)
+    }
+
+
+
+
  
- module.exports= {Signup};
+};
+
+
+
+
+
+
+ 
+ module.exports= {Signup,Login};

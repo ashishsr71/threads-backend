@@ -1,7 +1,7 @@
 const {Story}=require('../modals/modals')
 
 
-export const addStory= async(req,res)=>{
+ const addStory= async(req,res)=>{
   const userId= req.userId;
   const media=req.body;
 
@@ -19,3 +19,6 @@ export const addStory= async(req,res)=>{
 
 
 };
+
+
+module.exports= addStory;

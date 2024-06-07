@@ -9,7 +9,9 @@ const storySchema= new Schema({
   createdAt: { type: Date, default: Date.now, expires: 86400 }
 });
 // this is posts schema
-const postSchema= new Schema({ likes:[{type:Schema.Types.Mixed}],
+const postSchema= new Schema({ 
+   userId:{type:String}
+  ,likes:[{type:Schema.Types.Mixed}],
     video:{type:Schema.Types.Mixed}});
 
 
