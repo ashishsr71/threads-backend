@@ -8,7 +8,7 @@ const {auth}= require('./middlewares/auth');
 const router=require('./routes/signup')
 const loginrouter= require('./routes/userroutes')
 const addStoryRouter= require('./routes/storyroutes')
-
+const postRouter= require('./routes/postroutes');
 
 
 const app  = express();
@@ -66,6 +66,9 @@ app.post('/upload',auth,async(req,res)=>{
 app.use('/user',addStoryRouter);
 app.use('/user',router);
 app.use('/user',loginrouter);
+app.use('/user',postRouter);
+
+
 
 // create a post route
 // create a follower route
