@@ -42,8 +42,11 @@ const replySchema= new Schema({
   postId:{type:String,required:true},
   replies:[{type:Schema.Types.Mixed}]
 });
-
-
+// this following schema
+const followers= new Schema({
+userId:{type:String,required:true},
+followers:[{type:Schema.Types.Mixed}],
+});
 
 
 
