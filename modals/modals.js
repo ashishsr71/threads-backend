@@ -38,16 +38,23 @@ const userSchema= new Schema({
 
 // reply schema
 const replySchema= new Schema({
-  userId:{type:String ,required:true},
   postId:{type:String,required:true},
   replies:[{type:Schema.Types.Mixed}]
 });
+
+
 // this following schema
-const followers= new Schema({
+const followSchema= new Schema({
 userId:{type:String,required:true},
-followers:[{type:Schema.Types.Mixed}],
+followers:[{type:Schema.Types.ObjectId}],
+following:[{type:Schema.Types.ObjectId}]
 });
 
+// followrequest schema
+const followreqSchema=new Schema({
+userId:{type:String,required:true},
+requests:[{type:Schema.Types.ObjectId}]
+});
 
 
 
@@ -59,11 +66,13 @@ const Post= mongoose.model('Post',postSchema);
 const Comment= mongoose.model('Comment',commentSchema)
 const Notification = mongoose.model('Notification',notificationSchema);
 const Reply= mongoose.model('Reply',replySchema);
+const Follow=mongoose.model('Follow',followSchema);
+const Req=mongoose.model('Req',followreqSchema);
 
 
 
 
-module.exports = {Story,Comment,Post,Notification,User,Reply};
+module.exports = {Story,Comment,Post,Notification,User,Reply,Follow,Req};
 
 
 

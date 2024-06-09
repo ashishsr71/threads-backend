@@ -9,7 +9,7 @@ const router=require('./routes/signup')
 const loginrouter= require('./routes/userroutes')
 const addStoryRouter= require('./routes/storyroutes')
 const postRouter= require('./routes/postroutes');
-
+const followRouter= require('./routes/followroute')
 
 const app  = express();
 
@@ -67,7 +67,7 @@ app.use('/user',addStoryRouter);
 app.use('/user',router);
 app.use('/user',loginrouter);
 app.use('/user',postRouter);
-
+app.use('/user',followRouter);
 
 
 // create a post route

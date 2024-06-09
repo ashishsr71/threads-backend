@@ -1,4 +1,4 @@
-const {Post }= require('../modals/modals');
+const {Post ,Reply}= require('../modals/modals');
 
 
 const createPost = async(req,res)=>{
@@ -30,7 +30,7 @@ const getPosts=async(req,res)=>{
 
 // get single post
 const getsinglePost= async(req,res)=>{
-    const postId = req.query.id;
+    const postId = req.params.id;
     try {
         const post = await Post.findOne({_id:postId});
         res.status(200).json(post);
@@ -41,7 +41,7 @@ const getsinglePost= async(req,res)=>{
 
 // like a post 
 const likePost=async(req,res)=>{
-    const postId= req.query.id;
+    const postId= req.params.id;
     try {
         const post= await Post.findOneAndUpdate({_id:postId},{  $push: { likes: userId  },});
         res.status(200).json({message:'liked'});
@@ -55,7 +55,7 @@ const likePost=async(req,res)=>{
 // unlike a post
 const unlikePost= async(req,res)=>{
     const userId= req.userId;
-    const postId= req.query.id;
+    const postId= req.params.id;
     try {
         const isLiked= await Post.findOne({_id:postId,likes:userId});
         if(isLiked){
@@ -70,8 +70,23 @@ const unlikePost= async(req,res)=>{
 
 
 const reply= async(req,res)=>{
+    const postId=req.params.id;
     const userId = req.userId;
-    
+    const body=req.body;
+    try {
+        const doc= await Reply.findOne({postId});
+        if(doc){
+            doc.replies.push(body);
+            const updatedDoc=await doc.save();
+            return res.status(200).json(updatedDoc);
+        };
+     const replidDoc= await Reply.create({postId,userId,replies:[req.body]});
+      res.status(200).json(replidDoc);
+
+
+    } catch (error) {
+        res.status(500).json(error)
+    }
 }
 
 
@@ -81,4 +96,4 @@ const reply= async(req,res)=>{
 
 
 
-module.exports={createPost,getPosts,getsinglePost,likePost,unlikePost};
+module.exports={createPost,getPosts,getsinglePost,likePost,unlikePost,reply};
