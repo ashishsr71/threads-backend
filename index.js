@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const express = require('express');
 const cloudinary= require('cloudinary').v2;
 const cors=require('cors')
@@ -18,11 +20,11 @@ app.use(express.json());
 app.use(bodyParser.json())
 app.use(cors());
 
-
+// configuring clodinary
 cloudinary.config({
-    cloud_name:'dizyncuqs',
-    api_key:'171627853614734',
-    api_secret:'KxacVQTHO7hlKiDwkKtOtzTBwec',
+    cloud_name:process.env.CLOUDE_NAME,
+    api_key:process.env.API_KEY,
+    api_secret:process.env.API_SECRET,
     secure:true
 });
 
@@ -85,13 +87,13 @@ app.use('/user',followRouter);
 
 // the database connection
 async function main() {
-    await mongoose.connect('mongodb+srv://ashishsr71:Daksh2015@cluster0.g0atuug.mongodb.net/threads')
+    await mongoose.connect(process.env.MONOG_URL);
     console.log('database connected');
   }
 main();
 
-
+const port =process.env.PORT ||4000
 // started server
-app.listen(4000,()=>{
+app.listen(port,()=>{
     console.log('server started')
-})
+});
