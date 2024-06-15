@@ -16,9 +16,11 @@ const storySchema= new Schema({
 
 // this is posts schema
 const postSchema= new Schema({ 
-   userId:{type:String}
+   userId:{type:String,required:true}
   ,likes:[{type:Schema.Types.ObjectId}],
-    video:{type:Schema.Types.Mixed},createdAt:{type:Date,default:Date.now}});
+    media:{type:Schema.Types.Mixed},createdAt:{type:Date,default:Date.now},
+  text:{type:String}
+  });
 
 
     // this is comments schema

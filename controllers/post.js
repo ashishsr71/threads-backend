@@ -3,8 +3,9 @@ const {Post ,Reply}= require('../modals/modals');
 
 const createPost = async(req,res)=>{
 const userId= req.userId;
+const text = req.body?.text;
 try {
-    const post = await Post.create({userId,likes:[],video:req.body});
+    const post = await Post.create({userId,likes:[],media:req.body?.media,text});
     res.status(200).json(post);
 } catch (error) {
     res.status(500).json(error);
@@ -73,6 +74,7 @@ const reply= async(req,res)=>{
     const postId=req.params.id;
     const userId = req.userId;
     const body=req.body;
+    
     try {
         const doc= await Reply.findOne({postId});
         if(doc){

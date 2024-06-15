@@ -24,7 +24,7 @@ try {
         username,email,password:hashedPassword
     });
    const token= await jwt.sign({userId:doc._id},"jai baba sawath nath",{expiresIn:'1d'});
-   res.status(200).json({token});
+   res.status(200).json({token,userId:doc._id});
    
 
 } catch (error) {
@@ -41,14 +41,14 @@ try {
 const Login=async(req,res)=>{
     const {username,email,password}= req.body;
     try {
-        if(!username || !password){
+        if(!email || !password){
             return res.status(401).json({message:'invalid credential'})
         };
         
-        const user = await User.findOne({username});
+        const user = await User.findOne({email});
         // console.log(user)
         if(!user){
-            return res.status(401).json({message:'invalid'});
+            return res.status(400).json({message:'invalid'});
         };
         
         const match = await bcrypt.compare(password,user.password);
@@ -56,7 +56,7 @@ const Login=async(req,res)=>{
             return res.status(401).json({message:'invalidc'})
         };
         const token = jwt.sign({userId:user._id},"jai baba sawath nath",{expiresIn:"1d"});
-        res.status(200).json({token});
+        res.status(200).json({token,userId:user._id});
         
     } catch (error) {
         res.status(500).json(error)

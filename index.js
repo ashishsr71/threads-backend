@@ -44,7 +44,7 @@ const timestamp= Math.round((new Date).getTime()/1000);
 
 
 // upload 
-app.post('/upload',auth,async(req,res)=>{
+app.post('/upload/story',auth,async(req,res)=>{
     console.log(req.body)
     const video=req.body;
     try {
@@ -60,6 +60,9 @@ app.post('/upload',auth,async(req,res)=>{
 
 
 });
+
+
+
 
 
 
@@ -87,7 +90,8 @@ app.use('/user',followRouter);
 
 // the database connection
 async function main() {
-    await mongoose.connect(process.env.MONOG_URL);
+    await mongoose.connect(process.env.MONGO_URL);
+    console.log(process.env.MONGO_URL)
     console.log('database connected');
   }
 main();
