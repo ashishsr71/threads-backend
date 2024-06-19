@@ -1,4 +1,4 @@
-const {Story}=require('../modals/modals')
+const {Story,Follow}=require('../modals/modals')
 
 
  const addStory= async(req,res)=>{
@@ -19,6 +19,10 @@ const {Story}=require('../modals/modals')
 
 
 };
+
+
+
+
 
 
 module.exports= addStory;

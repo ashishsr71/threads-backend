@@ -49,7 +49,7 @@ const replySchema= new Schema({
 const followSchema= new Schema({
 userId:{type:String,required:true},
 followers:[{type:Schema.Types.ObjectId}],
-following:[{type:Schema.Types.ObjectId}]
+following:[{type:Schema.Types.ObjectId}],private:{type:Boolean,default:false}
 });
 
 // followrequest schema
