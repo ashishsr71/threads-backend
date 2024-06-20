@@ -1,4 +1,4 @@
-const {Post ,Reply}= require('../modals/modals');
+const {Post ,Reply,Follow}= require('../modals/modals');
 
 
 const createPost = async(req,res)=>{
@@ -91,13 +91,33 @@ const reply= async(req,res)=>{
     } catch (error) {
         res.status(500).json(error)
     }
+};
+
+const getforFeed= async(req,res)=>{
+const userId=req.userId;
+try {
+    const users= await Follow.findOne({userId});
+    const following= users.following;
+    const posts= await Post.find({ userId: { $in: following } });
+    res.status(200).json(posts);
+} catch (error) {
+    res.status(500).json({msg:"internal error"})
 }
 
 
 
 
 
+};
 
 
 
-module.exports={createPost,getPosts,getsinglePost,likePost,unlikePost,reply};
+
+
+
+
+
+
+
+
+module.exports={createPost,getPosts,getsinglePost,likePost,unlikePost,reply,getforFeed};
