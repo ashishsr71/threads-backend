@@ -4,8 +4,10 @@ const {Post ,Reply}= require('../modals/modals');
 const createPost = async(req,res)=>{
 const userId= req.userId;
 const text = req.body?.text;
+const media = req.body?.media;
+console.log(media)
 try {
-    const post = await Post.create({userId,likes:[],media:req.body?.media,text});
+    const post = await Post.create({userId,likes:[],media:media,text});
     res.status(200).json(post);
 } catch (error) {
     res.status(500).json(error);
