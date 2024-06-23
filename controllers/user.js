@@ -56,7 +56,8 @@ const Login=async(req,res)=>{
             return res.status(401).json({message:'invalidc'})
         };
         const token = jwt.sign({userId:user._id},"jai baba sawath nath",{expiresIn:"1d"});
-        res.status(200).json({token,userId:user._id});
+        const refreshToken=jwt.sign({userId:user._id},"jai baba sawath nath",{expiresIn:"5d"});
+        res.status(200).json({token,userId:user._id,refreshToken});
         
     } catch (error) {
         res.status(500).json(error)
