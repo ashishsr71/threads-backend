@@ -14,7 +14,7 @@ try {
      const useremail= await User.findOne({email});
 
      if(user||useremail){
-        return res.status(401).json({message:'use another username'});
+        return res.status(400).json({message:'use another username'});
      };
     
 
@@ -42,7 +42,7 @@ const Login=async(req,res)=>{
     const {username,email,password}= req.body;
     try {
         if(!email || !password){
-            return res.status(401).json({message:'invalid credential'})
+            return res.status(400).json({message:'invalid credential'})
         };
         
         const user = await User.findOne({email});
@@ -53,7 +53,7 @@ const Login=async(req,res)=>{
         
         const match = await bcrypt.compare(password,user.password);
         if(!match){
-            return res.status(401).json({message:'invalidc'})
+            return res.status(400).json({message:'invalidc'})
         };
         const token = jwt.sign({userId:user._id},"jai baba sawath nath",{expiresIn:"1d"});
         const refreshToken=jwt.sign({userId:user._id},"jai baba sawath nath",{expiresIn:"5d"});
