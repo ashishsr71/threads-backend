@@ -1,4 +1,4 @@
-const{User}= require('../modals/modals'); 
+const{User, Follow}= require('../modals/modals'); 
 const jwt = require('jsonwebtoken');
 const bcrypt= require('bcryptjs')
 
@@ -23,7 +23,8 @@ try {
     const doc = await User.create({
         username,email,password:hashedPassword
     });
-   const token= await jwt.sign({userId:doc._id},"jai baba sawath nath",{expiresIn:'1d'});
+    await Follow.create({followers:[],following:[],userId:doc._id,private:false});
+   const token=  jwt.sign({userId:doc._id},"jai baba sawath nath",{expiresIn:'1d'});
    res.status(200).json({token,userId:doc._id});
    
 

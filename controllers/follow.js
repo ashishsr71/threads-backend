@@ -16,10 +16,10 @@ const followSomeone=async(req,res)=>{
                 if(reqDoc){
                     reqDoc.requests.push(userId);
                     await reqDoc.save();
-                    return res.status(200).json({msg:'request sent'});
+                    return res.status(200).json({message:'request sent'});
                 };
               await Req.create({userId:toFollow,requests:[userId]});
-              return res.status(201).json({msg:'request sent w'});
+              return res.status(201).json({message:'request sent w'});
             };
 
             // this will follow the user if account is public
@@ -34,11 +34,11 @@ const followSomeone=async(req,res)=>{
            following.followers.push(userId);
            await doc.save();
            await following.save();
-           return res.status(200).json({msg:'followed'})
+           return res.status(200).json({id:toFollow});
         };
 
          await Follow.create({userId,followers:[],following:[toFollow]});
-          res.status(200).json({msg:'followed'});
+          res.status(200).json({id:toFollow});
 
 
 
@@ -46,8 +46,23 @@ const followSomeone=async(req,res)=>{
     } catch (error) {
         res.status(500).json(error);
     };
+};
+
+
+
+
+// get follow followers
+const getfollowFollowers= async(req,res)=>{
+    const userId=req.userId;
+    try {
+        const followerAndFollowing= await Follow.findOne({userId});
+        // console.log(followerAndFollowing);
+        res.status(200).json(followerAndFollowing);
+    } catch (error) {
+        res.status(500).json({msg:"internal server error"});
+    }
 }
 
 
 
-module.exports= followSomeone;
+module.exports= {followSomeone,getfollowFollowers};
