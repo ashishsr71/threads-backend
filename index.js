@@ -12,6 +12,9 @@ const loginrouter= require('./routes/userroutes')
 const addStoryRouter= require('./routes/storyroutes')
 const postRouter= require('./routes/postroutes');
 const followRouter= require('./routes/followroute')
+const {SearchUser} = require('./controllers/user');
+
+
 
 const app  = express();
 
@@ -41,8 +44,8 @@ const timestamp= Math.round((new Date).getTime()/1000);
     }
 
 });
-
-
+// api to serach users
+app.get('/search',SearchUser);
 // upload 
 app.post('/upload/story',auth,async(req,res)=>{
     console.log(req.body)

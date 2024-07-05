@@ -70,10 +70,16 @@ const Login=async(req,res)=>{
  
 };
 
+const SearchUser= async(req,res)=>{
+const toSearch= req.query.username;
+const regex = new RegExp(`^${toSearch}`, 'i')
+const users= await User.find({username: regex}).select('username').limit(10)
+res.status(200).json(users)
+};
 
 
 
 
 
  
- module.exports= {Signup,Login};
+ module.exports= {Signup,Login,SearchUser};
