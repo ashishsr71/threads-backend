@@ -2,14 +2,14 @@ require('dotenv').config();
 
 const express = require('express');
 const cloudinary= require('cloudinary').v2;
-const cors=require('cors')
+const cors=require('cors');
 const mongoose =require('mongoose')
 const {Story,Notification,Post,Comment}= require('./modals/modals')
-const bodyParser = require('body-parser')
+const bodyParser = require('body-parser');
 const {auth}= require('./middlewares/auth');
-const router=require('./routes/signup')
-const loginrouter= require('./routes/userroutes')
-const addStoryRouter= require('./routes/storyroutes')
+const router=require('./routes/signup');
+const loginrouter= require('./routes/userroutes');
+const addStoryRouter= require('./routes/storyroutes');
 const postRouter= require('./routes/postroutes');
 const followRouter= require('./routes/followroute')
 const {SearchUser} = require('./controllers/user');
