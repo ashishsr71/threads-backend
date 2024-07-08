@@ -1,4 +1,4 @@
-const {auth}= require('../middlewares/auth');
+// const {auth}= require('../middlewares/auth');
 const {Follow,User,Req}= require('../modals/modals');
 
 
@@ -9,7 +9,7 @@ const followSomeone=async(req,res)=>{
      const toFollow= req.params.id;
     try {
         // this will send a request  if the account id private
-       const target= await User.findOne({userId:toFollow});
+       const target= await User.findOne({_id:toFollow});
             const isPrivate= target.private;
             if(isPrivate){
                 const reqDoc= await Req.findOne({userId:toFollow});
@@ -24,16 +24,17 @@ const followSomeone=async(req,res)=>{
 
             // this will follow the user if account is public
         const doc= await Follow.findOne({userId});
-        const following = await Follow.findOne({toFollow});
+        const otherUser= await Follow.findOne({userId:toFollow});
+        console.log(otherUser)
 
         if(doc){
             if(doc.following.includes(toFollow)){
                 return res.status(200).json({msg:'already followed'});
             };
            doc.following.push(toFollow);
-           following.followers.push(userId);
+           otherUser.followers.push(userId);
            await doc.save();
-           await following.save();
+           await otherUser.save();
            return res.status(200).json({id:toFollow});
         };
 
@@ -44,6 +45,7 @@ const followSomeone=async(req,res)=>{
 
 
     } catch (error) {
+        // console.log(error);
         res.status(500).json(error);
     };
 };
@@ -61,8 +63,25 @@ const getfollowFollowers= async(req,res)=>{
     } catch (error) {
         res.status(500).json({msg:"internal server error"});
     }
+};
+
+
+
+const getUser=async(req,res)=>{
+    
+    const id=req.params.id;
+    // console.log(id)
+    try {
+       const user=await User.findOne({_id:id}).select('username');
+       const followers=await Follow.findOne({userId:id});
+    //    console.log(followers._doc)
+       res.status(200).json({username:user.username,...followers._doc})
+    } catch (error) {
+        // console.log(error)
+        res.status(500).json({msg:'internal server error'});
+    }
 }
 
 
 
-module.exports= {followSomeone,getfollowFollowers};
+module.exports= {followSomeone,getfollowFollowers,getUser};
