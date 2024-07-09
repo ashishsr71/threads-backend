@@ -1,4 +1,4 @@
-const { createPost, getPosts, getsinglePost, likePost, unlikePost, reply, getforFeed } = require('../controllers/post');
+const { createPost, getPosts, getsinglePost, likePost, unlikePost, reply, getforFeed ,getForOther} = require('../controllers/post');
 const { auth } = require('../middlewares/auth');
 
 
@@ -12,5 +12,6 @@ router.put('/likepost/:id',auth,likePost);
 router.put('/unlikepost/:id',auth,unlikePost);
 router.post('/reply/:id',auth,reply);
 router.get("/getfollowposts",auth,getforFeed)
+router.get('/getotherposts/:id', auth,getForOther)
 
 module.exports= router;

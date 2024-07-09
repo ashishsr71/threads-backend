@@ -11,6 +11,7 @@ if(!token){
 try {
     const decoded=jwt.verify(token,'jai baba sawath nath');
     req.userId=decoded.userId;
+    req.username=decoded.username;
     next();
 } catch (error) {
      return res.status(401).json({message:'unauthorized'})

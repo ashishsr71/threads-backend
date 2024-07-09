@@ -5,9 +5,10 @@ const createPost = async(req,res)=>{
 const userId= req.userId;
 const text = req.body?.text;
 const media = req.body?.media;
+const username=req.username;
 console.log(media)
 try {
-    const post = await Post.create({userId,likes:[],media:media,text});
+    const post = await Post.create({userId,likes:[],media:media,text,username});
     res.status(200).json(post);
 } catch (error) {
     res.status(500).json(error);
@@ -23,6 +24,7 @@ try {
 
 const getPosts=async(req,res)=>{
     const userId= req.userId;
+   
     try {
         const posts= await Post.find({userId});
         res.status(200).json(posts);
@@ -103,11 +105,18 @@ try {
 } catch (error) {
     res.status(500).json({msg:"internal error"})
 }
+};
 
 
-
-
-
+const getForOther=async(req,res)=>{
+    const id= req.params.id
+    
+    try {
+      const posts= await Post.find({userId:id});
+      res.status(200).json(posts);  
+    } catch (error) {
+        res.status(500).json(error)
+    }
 };
 
 
@@ -117,7 +126,4 @@ try {
 
 
 
-
-
-
-module.exports={createPost,getPosts,getsinglePost,likePost,unlikePost,reply,getforFeed};
+module.exports={createPost,getPosts,getsinglePost,likePost,unlikePost,reply,getforFeed,getForOther};

@@ -25,7 +25,7 @@ const followSomeone=async(req,res)=>{
             // this will follow the user if account is public
         const doc= await Follow.findOne({userId});
         const otherUser= await Follow.findOne({userId:toFollow});
-        console.log(otherUser)
+        // console.log(otherUser)
 
         if(doc){
             if(doc.following.includes(toFollow)){
@@ -58,8 +58,9 @@ const getfollowFollowers= async(req,res)=>{
     const userId=req.userId;
     try {
         const followerAndFollowing= await Follow.findOne({userId});
+        const userdata= await User.findOne({_id:userId}).select('username');
         // console.log(followerAndFollowing);
-        res.status(200).json(followerAndFollowing);
+        res.status(200).json({...followerAndFollowing._doc,username:userdata.username});
     } catch (error) {
         res.status(500).json({msg:"internal server error"});
     }

@@ -19,8 +19,10 @@ const postSchema= new Schema({
    userId:{type:String,required:true}
   ,likes:[{type:Schema.Types.ObjectId}],
     media:{type:Schema.Types.Mixed},createdAt:{type:Date,default:Date.now},
-  text:{type:String}
-  });
+  text:{type:String},
+  userImage:{type:String,default:''},
+  username:{type:String,}
+});
 
 
     // this is comments schema
@@ -49,7 +51,9 @@ const replySchema= new Schema({
 const followSchema= new Schema({
 userId:{type:String,required:true},
 followers:[{type:Schema.Types.ObjectId}],
-following:[{type:Schema.Types.ObjectId}],private:{type:Boolean,default:false}
+following:[{type:Schema.Types.ObjectId}],
+private:{type:Boolean,default:false},
+userImage:{type:String,default:null}
 });
 
 // followrequest schema
