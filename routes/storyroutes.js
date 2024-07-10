@@ -5,7 +5,7 @@ const {getStory}=require('../controllers/getStory');
 
 
 router.post('/addstory',auth,addStory);
-router.get('/getStory/:id',auth,getStory);
+router.get('/getStory',auth,getStory);
 
 
 
