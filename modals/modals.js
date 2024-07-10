@@ -10,7 +10,7 @@ const storySchema= new Schema({
   userId:String,
   likes:[{type:Schema.Types.Mixed}],
   video:{type:Schema.Types.Mixed},
-  createdAt: { type: Date, default: Date.now, expires: 86400 }
+  createdAt: { type: Date, default: Date.now, expires: 1000 }
 });
 
 
