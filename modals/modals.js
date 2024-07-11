@@ -9,8 +9,8 @@ const {Schema} = mongoose;
 const storySchema= new Schema({
   userId:String,
   likes:[{type:Schema.Types.Mixed}],
-  video:{type:Schema.Types.Mixed},
-  createdAt: { type: Date, default: Date.now, expires: 1000 }
+  video:{type:Schema.Types.Mixed},username:{type:String,required:true},
+  createdAt: { type: Date, default: Date.now, expires: 5000 }
 });
 
 
