@@ -123,7 +123,7 @@ const setUpStream= async()=>{
 // the database connection
 async function main() {
     await mongoose.connect(process.env.MONGO_URL);
-    await setUpStream();
+    // await setUpStream();
     console.log(process.env.MONGO_URL)
     console.log('database connected');
   }

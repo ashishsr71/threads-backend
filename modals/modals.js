@@ -7,10 +7,11 @@ const {Schema} = mongoose;
 
 // this is storyschema
 const storySchema= new Schema({
-  userId:String,
+  user:{type:Schema.Types.ObjectId},
+  userId:{type:String,required:true},
   likes:[{type:Schema.Types.Mixed}],
   video:{type:Schema.Types.Mixed},username:{type:String,required:true},
-  createdAt: { type: Date, default: Date.now, expires: 5000 }
+  createdAt: { type: Date, default: Date.now, expires: 60000 }
 });
 
 
