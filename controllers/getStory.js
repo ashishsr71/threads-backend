@@ -29,7 +29,7 @@ const getStory= async(req,res)=>{
         { $match: { userId: { $in: userArray } } },
         { $group: { _id: '$userId', stories: { $push: '$$ROOT' }, username: { $first: '$user.username' } } }
       ]);
-      console.log(stories)
+      // console.log(stories)
       
       return res.status(200).json(stories);
   

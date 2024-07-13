@@ -46,10 +46,11 @@ const getsinglePost= async(req,res)=>{
 
 // like a post 
 const likePost=async(req,res)=>{
+    const userId=req.userId;
     const postId= req.params.id;
     try {
         const post= await Post.findOneAndUpdate({_id:postId},{  $push: { likes: userId  },});
-        res.status(200).json({message:'liked'});
+        res.status(200).json(post);
     } catch (error) {
         res.status(500).json(error);
     }
