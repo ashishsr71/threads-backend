@@ -17,7 +17,7 @@ const {Updates:Story,Follow}=require('../modals/modals')
         user:userId
     });
 
-    res.status(200).json({_id:userId,stories:[doc,...stories]});
+    res.status(200).json(doc);
   } catch (error) {
     console.log(error);
     res.status(500).json({msg:"internal variable"})
