@@ -1,4 +1,4 @@
-const {Story,Follow}=require('../modals/modals');
+const {Updates:Story,Follow}=require('../modals/modals');
 
 const getStory= async(req,res)=>{
     const userId= req.userId;

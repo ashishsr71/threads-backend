@@ -68,7 +68,7 @@ requests:[{type:Schema.Types.ObjectId}]
 
 // modals here
 const User= mongoose.model('User',userSchema);
-const Story= mongoose.model('Story',storySchema);
+const Updates= mongoose.model('Story',storySchema);
 const Post= mongoose.model('Post',postSchema);
 const Comment= mongoose.model('Comment',commentSchema)
 const Notification = mongoose.model('Notification',notificationSchema);
@@ -79,7 +79,7 @@ const Req=mongoose.model('Req',followreqSchema);
 
 
 
-module.exports = {Story,Comment,Post,Notification,User,Reply,Follow,Req};
+module.exports = {Updates,Comment,Post,Notification,User,Reply,Follow,Req};
 
 
 

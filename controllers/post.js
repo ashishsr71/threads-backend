@@ -49,7 +49,16 @@ const likePost=async(req,res)=>{
     const userId=req.userId;
     const postId= req.params.id;
     try {
-        const post= await Post.findOneAndUpdate({_id:postId},{  $push: { likes: userId  },});
+        
+        // const post= await Post.findOneAndUpdate({_id:postId},{  $push: { likes: userId  },});
+        const post=await Post.findOne({_id:postId});
+        if(post.likes.includes(userId)){
+            post.likes.filter(item=>item!==userId);
+            await post.save();
+            return res.status(200).json(post);
+        };
+        post.likes.push(userId);
+        await post.save();
         res.status(200).json(post);
     } catch (error) {
         res.status(500).json(error);
