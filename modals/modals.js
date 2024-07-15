@@ -11,7 +11,12 @@ const storySchema= new Schema({
   userId:{type:String,required:true},
   likes:[{type:Schema.Types.Mixed}],
   video:{type:Schema.Types.Mixed},username:{type:String,required:true},
-  createdAt: { type: Date, default: Date.now, expires: 60000 }
+  expireAt: {
+    type: Date,
+    default: Date.now,
+    expires: 180,
+  },
+ 
 });
 
 
