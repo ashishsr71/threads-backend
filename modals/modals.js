@@ -1,3 +1,4 @@
+
 const mongoose = require('mongoose');
 
 const {Schema} = mongoose;
@@ -32,7 +33,14 @@ const postSchema= new Schema({
 
 
     // this is comments schema
-const commentSchema = new Schema({});
+const commentSchema = new Schema({
+  replie:{type:String},
+  postId:{type:String,required:true},
+  by:{type:Schema.Types.Mixed},
+  to:[{type:Schema.Types.Mixed}],
+  likes:[{type:Schema.Types.Mixed}],
+  replies:[{type:Schema.Types.Mixed}]
+});
 
 // this is notification schema
 const notificationSchema = new Schema({});
@@ -49,7 +57,7 @@ const userSchema= new Schema({
 // reply schema
 const replySchema= new Schema({
   postId:{type:String,required:true},
-  replies:[{type:Schema.Types.Mixed}]
+  replies:[{type:Schema.Types.ObjectId,ref:'Comment'}]
 });
 
 

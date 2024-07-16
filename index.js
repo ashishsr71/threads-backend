@@ -13,6 +13,7 @@ const addStoryRouter= require('./routes/storyroutes');
 const postRouter= require('./routes/postroutes');
 const followRouter= require('./routes/followroute')
 const {SearchUser} = require('./controllers/user');
+const commentRoute = require('./routes/commentroutes');
 
 
 
@@ -78,7 +79,7 @@ app.use('/user',router);
 app.use('/user',loginrouter);
 app.use('/user',postRouter);
 app.use('/user',followRouter);
-
+app.use('/user',commentRoute)
 
 // create a post route
 // create a follower route
