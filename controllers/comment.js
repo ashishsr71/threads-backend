@@ -30,7 +30,7 @@ const replyComment= async(req,res)=>{
     try {
         // const comment= await Comment.findOneAndUpdate({_id:id},{replies:{$push:{to,replie:text,likes:[],by:{username}}}});
         const comment={to:[{to}],likes:[],replie:text,by:{username,userId},};
-        const newcomment=await Comment.findOneAndUpdate({_id:id},{likes:{$push:comment}});
+        const newcomment=await Comment.findOneAndUpdate({_id:id},{replies:{$push:comment}});
         res.status(200).json(newcomment);
     } catch (error) {
         res.status(500).json({msg:"interval server error"})
