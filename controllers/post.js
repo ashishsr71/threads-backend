@@ -53,12 +53,14 @@ const likePost=async(req,res)=>{
         // const post= await Post.findOneAndUpdate({_id:postId},{  $push: { likes: userId  },});
         const post=await Post.findOne({_id:postId});
         if(post.likes.includes(userId)){
-            const doc= await Post.findOneAndUpdate({_id:postId},{$pull:{likes:userId}});
+            await Post.findOneAndUpdate({_id:postId},{$pull:{likes:userId}});
+            const doc= await Post.findOne({_id:postId})
             console.log("unliked")
             return res.status(200).json({msg:"unliked",doc});
         };
         console.log('post liked')
-     const doc=  await Post.findOneAndUpdate({_id:postId},{  $push: { likes: userId  },});
+        await Post.findOneAndUpdate({_id:postId},{  $push: { likes: userId  },});
+     const doc= await Post.findOne({_id:postId})
         res.status(200).json({msg:'liked',doc});
     } catch (error) {
         res.status(500).json(error);
