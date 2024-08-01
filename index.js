@@ -14,11 +14,14 @@ const postRouter= require('./routes/postroutes');
 const followRouter= require('./routes/followroute')
 const {SearchUser} = require('./controllers/user');
 const commentRoute = require('./routes/commentroutes');
+const http = require('http');
+const { Server } = require("socket.io");
 
 
-
+// initalizing socket server
 const app  = express();
-
+const server = http.createServer(app);
+const io = new Server(server);
 // global midddlewares
 app.use(express.json());
 app.use(bodyParser.json())
@@ -132,6 +135,6 @@ main();
 
 const port =process.env.PORT ||4000
 // started server
-app.listen(port,()=>{
+server.listen(port,()=>{
     console.log('server started')
 });
