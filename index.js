@@ -21,7 +21,12 @@ const { Server } = require("socket.io");
 // initalizing socket server
 const app  = express();
 const server = http.createServer(app);
-const io = new Server(server);
+ const io = new Server(server, {
+  cors: {
+      origin: "http://localhost:5173", // Replace with your React app URL
+      methods: ["GET", "POST"]
+  }
+});
 // global midddlewares
 app.use(express.json());
 app.use(bodyParser.json())
@@ -71,7 +76,24 @@ app.get('/search',SearchUser);
 
 
 
+const userSocketMap={};
+io.on('connection', (socket) => {
+  const userId=socket.handshake.query.userId;
+  console.log(socket.handshake.query.userId);
+  if(userId!="undefined")userSocketMap[userId]=socket.id;
+  console.log('a user connected');
 
+  socket.on('disconnect', () => {
+    delete userSocketMap[userId];
+      console.log('user disconnected');
+  });
+
+  socket.on('message', (message) => {
+      console.log('message received: ', message);
+      io.to(userSocketMap[userId]).emit('message',{message})
+      // io.emit('message', message);
+  });
+});
 
 
 
@@ -123,7 +145,7 @@ const setUpStream= async()=>{
 
 
 
-
+module.exports={io,userSocketMap};
 // the database connection
 async function main() {
     await mongoose.connect(process.env.MONGO_URL);

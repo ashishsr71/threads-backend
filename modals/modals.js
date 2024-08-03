@@ -76,6 +76,21 @@ userId:{type:String,required:true},
 requests:[{type:Schema.Types.ObjectId}]
 });
 
+const messageSchema=new Schema({
+text:{type:String},
+to:{type:Schema.Types.Mixed},
+conversesationId:{type:String,required:true},
+senderId:{type:String,required:true},
+recieverId:{type:String},
+time:Date.now(),
+
+});
+
+const converSchema= new Schema({
+  participants:[{type:Schema.Types.Mixed}],
+time:Date.now(),
+
+});
 
 
 
@@ -88,11 +103,12 @@ const Notification = mongoose.model('Notification',notificationSchema);
 const Reply= mongoose.model('Reply',replySchema);
 const Follow=mongoose.model('Follow',followSchema);
 const Req=mongoose.model('Req',followreqSchema);
+const Message=mongoose.model('Message',messageSchema);
+const Conversesation=mongoose.model('Conversesation',converSchema);
 
 
 
-
-module.exports = {Updates,Comment,Post,Notification,User,Reply,Follow,Req};
+module.exports = {Updates,Comment,Post,Notification,User,Reply,Follow,Req,Message,Conversesation};
 
 
 
