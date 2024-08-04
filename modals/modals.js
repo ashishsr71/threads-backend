@@ -82,15 +82,16 @@ to:{type:Schema.Types.Mixed},
 conversesationId:{type:String,required:true},
 senderId:{type:String,required:true},
 recieverId:{type:String},
-time:Date.now(),
 
-});
+
+},{timestamps:true});
 
 const converSchema= new Schema({
-  participants:[{type:Schema.Types.Mixed}],
-time:Date.now(),
+  participants:[{type:String}],
 
-});
+lastmessage:{text:{type:String},sender:{type:Schema.Types.Mixed},seen:{type:Boolean,default:false}}
+
+},{timestamps:true});
 
 
 
@@ -108,7 +109,7 @@ const Conversesation=mongoose.model('Conversesation',converSchema);
 
 
 
-module.exports = {Updates,Comment,Post,Notification,User,Reply,Follow,Req,Message,Conversesation};
+module.exports = {Updates,Comment,Post,Notification,User,Reply,Follow,Req,Message,  Conversesation};
 
 
 
