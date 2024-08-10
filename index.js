@@ -14,19 +14,13 @@ const postRouter= require('./routes/postroutes');
 const followRouter= require('./routes/followroute')
 const {SearchUser} = require('./controllers/user');
 const commentRoute = require('./routes/commentroutes');
-const http = require('http');
-const { Server } = require("socket.io");
 
+const messagerouter = require('./routes/messageroutes');
+const{io,server,app}=require('./socket/socket')
 
 // initalizing socket server
-const app  = express();
-const server = http.createServer(app);
- const io = new Server(server, {
-  cors: {
-      origin: "*", // Replace with your React app URL
-      methods: ["GET", "POST"]
-  }
-});
+
+
 // global midddlewares
 app.use(express.json());
 app.use(bodyParser.json())
@@ -76,24 +70,7 @@ app.get('/search',SearchUser);
 
 
 
-const userSocketMap={};
-io.on('connection', (socket) => {
-  const userId=socket.handshake.query.userId;
-  console.log(socket.handshake.query.userId);
-  if(userId!="undefined")userSocketMap[userId]=socket.id;
-  console.log('a user connected');
 
-  socket.on('disconnect', () => {
-    delete userSocketMap[userId];
-      console.log('user disconnected');
-  });
-
-  socket.on('message', (message) => {
-      console.log('message received: ', message);
-      io.to(userSocketMap[userId]).emit('message',{message})
-      // io.emit('message', message);
-  });
-});
 
 
 
@@ -105,7 +82,7 @@ app.use('/user',loginrouter);
 app.use('/user',postRouter);
 app.use('/user',followRouter);
 app.use('/user',commentRoute)
-
+app.use('/user',messagerouter)
 // create a post route
 // create a follower route
 // create comment route
@@ -145,7 +122,7 @@ const setUpStream= async()=>{
 
 
 
-module.exports={io,userSocketMap};
+
 // the database connection
 async function main() {
     await mongoose.connect(process.env.MONGO_URL);

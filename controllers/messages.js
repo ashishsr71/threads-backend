@@ -1,12 +1,12 @@
-const { userSocketMap, io } = require("../index");
+const { getSocketId, io } = require("../socket/socket");
 const {Conversesation, Message}= require('../modals/modals')
 
 const sendMessage=async(req,res)=>{
 const {reciepentId,convId,text}=req.body;
 const userId=req.userId;
-console.log(userSocketMap);
 
-let converse= await Conversesation.findOne({participants:{$all:[senderId,reciepentId]}});
+
+let converse= await Conversesation.findOne({participants:{$all:[userId,reciepentId]}});
 if(!converse){
   converse= await Conversesation.create({participants:[userId,reciepentId],sender:{senderId:userId},lastmessage:text,seen:false});
 }else{
@@ -15,11 +15,15 @@ if(!converse){
 };
 
 const message=await Message.create({text,recieverId:reciepentId,senderId:userId,conversesationId:converse._id,to:{}});
-if(userSocketMap[reciepentId]){
-    io.to(userSocketMap[reciepentId]).emit('message',message);
+const socketId=getSocketId(reciepentId);
+if(socketId){
+    io.to(socketId).emit('message',message);
 };
 
 res.status(200).json(message);
 
 
 };
+
+
+module.exports={sendMessage};
