@@ -25,5 +25,17 @@ res.status(200).json(message);
 
 };
 
+const getConversesations=async(req,res)=>{
+const userId=req.userId;
 
-module.exports={sendMessage};
+try {
+  const conversesations= await Conversesation.find({participants:{$in:[userId]}}).populate({path:'participants',select:'username userImg'});
+  res.status(200).json(conversesations);
+} catch (error) {
+  res.status(500).json({msg:"internal server error"})
+}
+};
+
+
+
+module.exports={sendMessage,getConversesations};
