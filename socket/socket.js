@@ -18,7 +18,7 @@ const server = http.createServer(app);
 const userSocketMap={};
 io.on('connection', (socket) => {
   const userId=socket.handshake.query.userId;
-  console.log(socket.handshake.query.userId);
+  // console.log(socket.handshake.query.userId);
   if(userId!="undefined")userSocketMap[userId]=socket.id;
   console.log('a user connected');
 
@@ -28,8 +28,8 @@ io.on('connection', (socket) => {
   });
 
   socket.on('message', (message) => {
-      console.log('message received: ', message);
-      io.to(userSocketMap[userId]).emit('message',{message})
+      // console.log('message received: ', message);
+      io.to(userSocketMap[userId]).emit('message',message)
       // io.emit('message', message);
   });
 });
