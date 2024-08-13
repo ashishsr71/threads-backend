@@ -78,7 +78,7 @@ try {
     if(user.userImg.length>0){};
     user.userImg=newImgUrl;
     await user.save();
-    res.status(200).json({msg:"profile picture updated"})
+    res.status(200).json({msg:"profile picture updated",url:newImgUrl})
 } catch (error) {
     res.status(500).json({msg:"internal server error"})
 }
