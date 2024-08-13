@@ -73,10 +73,10 @@ const getUser=async(req,res)=>{
     const id=req.params.id;
     // console.log(id)
     try {
-       const user=await User.findOne({_id:id}).select('username');
+       const user=await User.findOne({_id:id}).select('username userImg');
        const followers=await Follow.findOne({userId:id});
     //    console.log(followers._doc)
-       res.status(200).json({username:user.username,...followers._doc})
+       res.status(200).json({username:user.username,...followers._doc,userImg:user.userImg})
     } catch (error) {
         // console.log(error)
         res.status(500).json({msg:'internal server error'});

@@ -75,11 +75,16 @@ const userId=req.userId;
 const newImgUrl=req.body.url;
 try {
     const user=await User.findOne({_id:userId});
-    if(user.userImg.length>0){};
+    const fromFollow=await Follow.findOne({userId});
+    if(user.userImg?.length>0||!user.userImg){};
+    fromFollow.userImage=newImgUrl;
+    
     user.userImg=newImgUrl;
+    await fromFollow.save();
     await user.save();
     res.status(200).json({msg:"profile picture updated",url:newImgUrl})
 } catch (error) {
+    console.log(error)
     res.status(500).json({msg:"internal server error"})
 }
 };
