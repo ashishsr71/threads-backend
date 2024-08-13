@@ -59,6 +59,7 @@ const getfollowFollowers= async(req,res)=>{
     try {
         const followerAndFollowing= await Follow.findOne({userId});
         const userdata= await User.findOne({_id:userId}).select('username userImg');
+        console.log(userdata)
         // console.log(followerAndFollowing);
         res.status(200).json({...followerAndFollowing._doc,username:userdata.username,userImg:userdata.userImg});
     } catch (error) {
@@ -76,7 +77,7 @@ const getUser=async(req,res)=>{
        const user=await User.findOne({_id:id}).select('username userImg');
        const followers=await Follow.findOne({userId:id});
     //    console.log(followers._doc)
-    console.log(user)
+    // console.log(user)
        res.status(200).json({username:user.username,...followers._doc,userImg:user.userImg})
     } catch (error) {
         // console.log(error)

@@ -73,15 +73,13 @@ const Login=async(req,res)=>{
 const AddImage=async(req,res)=>{
 const userId=req.userId;
 const newImgUrl=req.body.url;
+// console.log(newImgUrl)
 try {
-    const user=await User.findOne({_id:userId});
-    const fromFollow=await Follow.findOne({userId});
+    const user=await User.findOneAndUpdate({_id:userId},{userImg:newImgUrl});
     if(user.userImg?.length>0||!user.userImg){};
-    fromFollow.userImage=newImgUrl;
+    const fromFollow=await Follow.findOneAndUpdate({userId},{userImage:newImgUrl});
     
-    user.userImg=newImgUrl;
-    await fromFollow.save();
-    await user.save();
+    
     res.status(200).json({msg:"profile picture updated",url:newImgUrl})
 } catch (error) {
     console.log(error)
