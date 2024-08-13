@@ -6,9 +6,10 @@ const userId= req.userId;
 const text = req.body?.text;
 const media = req.body?.media;
 const username=req.username;
+const userImg=req.userImg||'';
 console.log(media)
 try {
-    const post = await Post.create({userId,likes:[],media:media,text,username});
+    const post = await Post.create({userId,likes:[],media:media,text,username,userImage:userImg});
     res.status(200).json(post);
 } catch (error) {
     res.status(500).json(error);

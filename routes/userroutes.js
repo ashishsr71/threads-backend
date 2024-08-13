@@ -1,6 +1,7 @@
-const {Login, Signup}= require('../controllers/user');
+const {Login, Signup, AddImage}= require('../controllers/user');
 const router = require('express').Router();
 const jwt= require('jsonwebtoken');
+const { auth } = require('../middlewares/auth');
 
 router.post('/refreshtoken',async(req,res)=>{
     const refreshtoken=req.body.refreshToken;
@@ -18,5 +19,5 @@ router.post('/refreshtoken',async(req,res)=>{
 });
 router.post('/login',Login);
 router.post('/signup',Signup);
-
+router.post('/profilepic',auth,AddImage)
 module.exports=router;

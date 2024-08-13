@@ -83,7 +83,7 @@ app.use('/user',postRouter);
 app.use('/user',followRouter);
 app.use('/user',commentRoute)
 app.use('/user',messagerouter)
-// create a post route
+// create a post route  
 // create a follower route
 // create comment route
 // create a like unlike route

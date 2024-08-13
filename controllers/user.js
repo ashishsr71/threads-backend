@@ -70,6 +70,22 @@ const Login=async(req,res)=>{
  
 };
 
+const AddImage=async(req,res)=>{
+const userId=req.userId;
+const newImgUrl=req.body.url;
+try {
+    const user=await User.findOne({_id:userId});
+    if(user.userImg.length>0){};
+    user.userImg=newImgUrl;
+    await user.save();
+    res.status(200).json({msg:"profile picture updated"})
+} catch (error) {
+    res.status(500).json({msg:"internal server error"})
+}
+};
+
+
+
 const SearchUser= async(req,res)=>{
 const toSearch= req.query.username;
 const regex = new RegExp(`^${toSearch}`, 'i')
@@ -91,4 +107,4 @@ res.status(200).json(users)
 
 
  
- module.exports= {Signup,Login,SearchUser};
+ module.exports= {Signup,Login,SearchUser,AddImage};
