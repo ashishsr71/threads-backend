@@ -5,11 +5,10 @@ const createPost = async(req,res)=>{
 const userId= req.userId;
 const text = req.body?.text;
 const media = req.body?.media;
-const username=req.username;
-const userImg=req.userImg||'';
+
 console.log(media)
 try {
-    const post = await Post.create({userId,likes:[],media:media,text,username,userImage:userImg});
+    const post = await Post.create({userId,likes:[],media:media,text});
     res.status(200).json(post);
 } catch (error) {
     res.status(500).json(error);
@@ -38,7 +37,7 @@ const getPosts=async(req,res)=>{
 const getsinglePost= async(req,res)=>{
     const postId = req.params.id;
     try {
-        const post = await Post.findOne({_id:postId});
+        const post = await Post.findOne({_id:postId}).populate({path:"userId",select:'username userImg'}) .exec()
         res.status(200).json(post);
     } catch (error) {
         res.status(500).json(error);
@@ -55,13 +54,13 @@ const likePost=async(req,res)=>{
         const post=await Post.findOne({_id:postId});
         if(post.likes.includes(userId)){
             await Post.findOneAndUpdate({_id:postId},{$pull:{likes:userId}});
-            const doc= await Post.findOne({_id:postId})
+            const doc= await Post.findOne({_id:postId}).populate({path:"userId",select:'username userImg'}) .exec();
             console.log("unliked")
             return res.status(200).json({msg:"unliked",doc});
         };
         console.log('post liked')
         await Post.findOneAndUpdate({_id:postId},{  $push: { likes: userId  },});
-     const doc= await Post.findOne({_id:postId})
+     const doc= await Post.findOne({_id:postId}).populate({path:"userId",select:'username userImg'}) .exec()
         res.status(200).json({msg:'liked',doc});
     } catch (error) {
         res.status(500).json(error);
@@ -113,7 +112,8 @@ const userId=req.userId;
 try {
     const users= await Follow.findOne({userId});
     const following= users.following;
-    const posts= await Post.find({ userId: { $in: following } });
+    const posts= await Post.find({ userId: { $in: following } }).populate({path:"userId",select:'username userImg'}) .exec();
+    console.log(posts)
     res.status(200).json(posts);
 } catch (error) {
     res.status(500).json({msg:"internal error"})
@@ -125,7 +125,7 @@ const getForOther=async(req,res)=>{
     const id= req.params.id
     
     try {
-      const posts= await Post.find({userId:id});
+      const posts= await Post.find({userId:id}).populate({path:"userId",select:'username userImg'}) .exec();
       res.status(200).json(posts);  
     } catch (error) {
         res.status(500).json(error)

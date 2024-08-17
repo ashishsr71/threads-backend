@@ -99,6 +99,7 @@ const setUpStream= async()=>{
   
           // Perform your backend action here
           try {
+            
             // Example: Fetch additional data or perform necessary actions
             const deletedAsset = await Story.findById(change.documentKey._id);
             if (deletedAsset) {

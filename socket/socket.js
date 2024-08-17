@@ -26,6 +26,22 @@ io.on('connection', (socket) => {
     delete userSocketMap[userId];
       console.log('user disconnected');
   });
+   socket.on('join-room', (roomId) => {
+        socket.join(roomId);
+        socket.to(roomId).emit('user-connected', socket.id);
+    });
+
+    socket.on('offer', (data) => {
+        socket.to(data.roomId).emit('offer', data.sdp);
+    });
+
+    socket.on('answer', (data) => {
+        socket.to(data.roomId).emit('answer', data.sdp);
+    });
+
+    socket.on('ice-candidate', (data) => {
+        socket.to(data.roomId).emit('ice-candidate', data.candidate);
+    });
 
   socket.on('message', (message) => {
       // console.log('message received: ', message);

@@ -23,12 +23,10 @@ const storySchema= new Schema({
 
 // this is posts schema
 const postSchema= new Schema({ 
-   userId:{type:String,required:true}
+   userId:{type:Schema.Types.ObjectId,ref:'User'}
   ,likes:[{type:Schema.Types.ObjectId}],
     media:{type:Schema.Types.Mixed},createdAt:{type:Date,default:Date.now},
   text:{type:String},
-  userImage:{type:String,default:''},
-  username:{type:String,}
 });
 
 
