@@ -28,24 +28,21 @@ io.on('connection', (socket) => {
       console.log('user disconnected');
   });
   socket.on('join-room', (roomId) => {
-    if (!rooms[roomId]) rooms[roomId] = [];
-    rooms[roomId].push(socket.id);
-
     socket.join(roomId);
     socket.to(roomId).emit('user-connected', socket.id);
 });
 
-  socket.on('offer', (data) => {
-    socket.to(data.roomId).emit('offer', { sdp: data.sdp, socketId: socket.id });
-  });
+socket.on('offer', (data) => {
+    socket.to(data.roomId).emit('offer', data.sdp);
+});
 
-  socket.on('answer', (data) => {
-    socket.to(data.roomId).emit('answer', { sdp: data.sdp, socketId: socket.id });
-  });
+socket.on('answer', (data) => {
+    socket.to(data.roomId).emit('answer', data.sdp);
+});
 
-  socket.on('ice-candidate', (data) => {
-    socket.to(data.roomId).emit('ice-candidate', { candidate: data.candidate, socketId: socket.id });
-  });
+socket.on('ice-candidate', (data) => {
+    socket.to(data.roomId).emit('ice-candidate', data.candidate);
+});
   socket.on('message', (message) => {
       // console.log('message received: ', message);
       io.to(userSocketMap[userId]).emit('message',message)
