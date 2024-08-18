@@ -27,9 +27,13 @@ io.on('connection', (socket) => {
     delete userSocketMap[userId];
       console.log('user disconnected');
   });
-  socket.on('join-room', (roomId) => {
+  
+  socket.on('join-room', ({roomId,otherId}) => {
     socket.join(roomId);
     socket.to(roomId).emit('user-connected', socket.id);
+    if(userSocketMap[otherId]){
+        socket.to(userSocketMap[otherId]).emit('get-roomId',roomId)
+    }
 });
 
 socket.on('offer', (data) => {
