@@ -33,13 +33,7 @@ io.on('connection', (socket) => {
 
     socket.join(roomId);
     socket.to(roomId).emit('user-connected', socket.id);
-
-    socket.on('disconnect', () => {
-      console.log('User disconnected:', socket.id);
-      rooms[roomId] = rooms[roomId].filter(id => id !== socket.id);
-      socket.to(roomId).emit('user-disconnected', socket.id);
-    });
-  });
+});
 
   socket.on('offer', (data) => {
     socket.to(data.roomId).emit('offer', { sdp: data.sdp, socketId: socket.id });
