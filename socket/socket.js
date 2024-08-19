@@ -21,24 +21,18 @@ io.on('connection', (socket) => {
   const userId=socket.handshake.query.userId;
   // console.log(socket.handshake.query.userId);
   if(userId!="undefined")userSocketMap[userId]=socket.id;
-  console.log('a user connected');
+  console.log('a user connected',userId);
 
-  socket.on('disconnect', () => {
-    delete userSocketMap[userId];
-      console.log('user disconnected');
-  });
+ 
   
-  socket.on('join-room', ({roomId,otherId}) => {
-    socket.join(roomId);
-    socket.to(roomId).emit('user-connected', socket.id);
-  
-});
-
+ 
 socket.on('calluser',({toWhom,signalData,from,name})=>{
-    io.to(userSocketMap[toWhom]).emit("callUser",{signal:signalData,from,name});
+    console.log(toWhom)
+    io.to(userSocketMap[toWhom]).emit("calluser",{signal:signalData,from,name});
 });
 
 socket.on('answercall',(data)=>{
+    console.log(data.userId)
     io.to(userSocketMap[data.userId]).emit("callAccepted",data.signal);
 });
 // socket.on('offer', (data) => {
@@ -57,6 +51,10 @@ socket.on('answercall',(data)=>{
 //       io.to(userSocketMap[userId]).emit('message',message)
 //       // io.emit('message', message);
 //   });
+socket.on('disconnect', () => {
+    delete userSocketMap[userId];
+      console.log('user disconnected');
+  });
 });
 
 const getSocketId=(id)=>{
