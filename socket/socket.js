@@ -31,27 +31,32 @@ io.on('connection', (socket) => {
   socket.on('join-room', ({roomId,otherId}) => {
     socket.join(roomId);
     socket.to(roomId).emit('user-connected', socket.id);
-    if(userSocketMap[otherId]){
-        socket.to(userSocketMap[otherId]).emit('get-roomId',roomId)
-    }
+  
 });
 
-socket.on('offer', (data) => {
-    socket.to(data.roomId).emit('offer', data.sdp);
+socket.on('calluser',({toWhom,signalData,from,name})=>{
+    io.to(userSocketMap[toWhom]).emit("callUser",{signal:signalData,from,name});
 });
 
-socket.on('answer', (data) => {
-    socket.to(data.roomId).emit('answer', data.sdp);
+socket.on('answercall',(data)=>{
+    io.to(userSocketMap[data.userId]).emit("callAccepted",data.signal);
 });
+// socket.on('offer', (data) => {
+//     socket.to(data.roomId).emit('offer', data.sdp);
+// });
 
-socket.on('ice-candidate', (data) => {
-    socket.to(data.roomId).emit('ice-candidate', data.candidate);
-});
-  socket.on('message', (message) => {
-      // console.log('message received: ', message);
-      io.to(userSocketMap[userId]).emit('message',message)
-      // io.emit('message', message);
-  });
+// socket.on('answer', (data) => {
+//     socket.to(data.roomId).emit('answer', data.sdp);
+// });
+
+// socket.on('ice-candidate', (data) => {
+//     socket.to(data.roomId).emit('ice-candidate', data.candidate);
+// });
+//   socket.on('message', (message) => {
+//       // console.log('message received: ', message);
+//       io.to(userSocketMap[userId]).emit('message',message)
+//       // io.emit('message', message);
+//   });
 });
 
 const getSocketId=(id)=>{
