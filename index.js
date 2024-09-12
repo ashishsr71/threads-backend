@@ -16,7 +16,8 @@ const {SearchUser} = require('./controllers/user');
 const commentRoute = require('./routes/commentroutes');
 
 const messagerouter = require('./routes/messageroutes');
-const{io,server,app}=require('./socket/socket')
+const{io,server,app}=require('./socket/socket');
+const { startMessageConsumer } = require('./kafkaconfig/kafka');
 
 // initalizing socket server
 
@@ -34,7 +35,10 @@ cloudinary.config({
     secure:true
 });
 
-
+async function init(){
+  await startMessageConsumer();
+};
+init();
 // the signature generator
 app.get('/getsignature',auth,async(req,res)=>{
 

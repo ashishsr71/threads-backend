@@ -1,5 +1,6 @@
 const { getSocketId, io } = require("../socket/socket");
-const {Conversesation, Message}= require('../modals/modals')
+const {Conversesation, Message}= require('../modals/modals');
+const { produceMessage } = require("../kafkaconfig/kafka");
 
 const sendMessage=async(req,res)=>{
 const {reciepentId,text}=req.body;
@@ -21,7 +22,7 @@ if(socketId){
   // console.log(' iam working')
     io.to(socketId).emit('message',message);
 };
-
+await produceMessage(JSON.stringify(message));
 res.status(200).json(message);
 
 
