@@ -7,7 +7,8 @@ const { Kafka,Producer } = require('kafkajs');
 // import prismaClient from "./prisma";
 const fs=require('fs');
 const path=require('path');
-const {Message}=require('../modals/modals');
+const {Message,Conversesation}=require('../modals/modals');
+const { error } = require('console');
 
 const kafka = new Kafka({
   brokers: ["kafka-17acc8aa-romiljayson123-6b0b.c.aivencloud.com:15200"],
@@ -37,7 +38,7 @@ let producer= null;
   const msg=JSON.parse(message);
 //   console.log(typeof(message))
   await producer.send({
-    messages: [{ key:JSON.stringify(msg._id), value: message }],
+    messages: [{ key:JSON.stringify(msg.senderId+msg.senderId), value: message }],
     topic: "MESSAGES",
   });
   return true;
@@ -52,13 +53,26 @@ let producer= null;
   await consumer.run({
     autoCommit: true,
     eachMessage: async ({ message, pause }) => {
+      // console.log(message)
       if (!message.value) return;
       console.log(`New Message Recv..`);
-      console.log(message.value)
+      // console.log(message.value)
+      const msg=JSON.parse(message.value);
+      console.log(msg);
       try {
+        let converse= await Conversesation.findOne({participants:{$all:[msg.senderId,msg.reciepentId]}});
+if(!converse){
+  converse= await Conversesation.create({participants:[msg.senderId,msg.reciepentId],lastmessage:{text:msg.text,seen:false,sender:{reciepentId:msg.reciepentId,senderId:msg.senderId}}});
+}else{
+   converse.updateOne({lastmessage:{text:msg.text,seen:false,sender:{reciepentId:msg.reciepentId,senderId:msg.senderId}}});
+   await converse.save();
+};
+
+const message=await Message.create({text:msg.text,recieverId:msg.reciepentId,senderId:msg.senderId,conversesationId:converse._id,to:{}});
         // await sendMessage();The on 
         // this is what about you will get to know to what is go
       } catch (err) {
+        console.log(err)
         console.log("Something is wrong");
         pause();
         setTimeout(() => {

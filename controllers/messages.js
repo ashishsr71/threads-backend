@@ -5,25 +5,25 @@ const { produceMessage } = require("../kafkaconfig/kafka");
 const sendMessage=async(req,res)=>{
 const {reciepentId,text}=req.body;
 const userId=req.userId;
+const msg={senderId:userId,reciepentId,text:text||"",}
 
+// let converse= await Conversesation.findOne({participants:{$all:[userId,reciepentId]}});
+// if(!converse){
+//   converse= await Conversesation.create({participants:[userId,reciepentId],lastmessage:{text,seen:false,sender:{reciepentId,senderId:userId}}});
+// }else{
+//    converse.updateOne({lastmessage:{text,seen:false,sender:{reciepentId,senderId:userId}}});
+//    await converse.save();
+// };
 
-let converse= await Conversesation.findOne({participants:{$all:[userId,reciepentId]}});
-if(!converse){
-  converse= await Conversesation.create({participants:[userId,reciepentId],lastmessage:{text,seen:false,sender:{reciepentId,senderId:userId}}});
-}else{
-   converse.updateOne({lastmessage:{text,seen:false,sender:{reciepentId,senderId:userId}}});
-   await converse.save();
-};
-
-const message=await Message.create({text,recieverId:reciepentId,senderId:userId,conversesationId:converse._id,to:{}});
+// const message=await Message.create({text,recieverId:reciepentId,senderId:userId,conversesationId:converse._id,to:{}});
 const socketId=getSocketId(reciepentId);
 // console.log(socketId)
 if(socketId){
   // console.log(' iam working')
-    io.to(socketId).emit('message',message);
+    io.to(socketId).emit('message',msg);
 };
-await produceMessage(JSON.stringify(message));
-res.status(200).json(message);
+await produceMessage(JSON.stringify(msg));
+res.status(200).json(msg);
 
 
 };
@@ -44,8 +44,9 @@ const getSingleConversesation=async(req,res)=>{
   const userId= req.userId;
   const id=req.params.id;
   try {
-    const conversesation=await Message.find({conversesationId:id});
-    res.status(200).json(conversesation);
+    const conversesation=await Message.find({conversesationId:id}).sort({createdAt:-1}).limit(15).exec();
+    const realConvo=conversesation.reverse();
+    res.status(200).json(realConvo);
   } catch (error) {
     res.status(500).json({msg:'internal server error'});
   }
