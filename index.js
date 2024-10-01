@@ -18,10 +18,16 @@ const commentRoute = require('./routes/commentroutes');
 const messagerouter = require('./routes/messageroutes');
 const{io,server,app}=require('./socket/socket');
 const { startMessageConsumer } = require('./kafkaconfig/kafka');
+// 
 
 // initalizing socket server
 
-
+let AccessToken;
+(async () => {
+  AccessToken = (await import('livekit-server-sdk')).AccessToken;
+  
+  // Now you can use livekit here or in the rest of your code
+})();
 // global midddlewares
 app.use(express.json());
 app.use(bodyParser.json())
@@ -35,10 +41,10 @@ cloudinary.config({
     secure:true
 });
 
-async function init(){
-  await startMessageConsumer();
-};
-init();
+// async function init(){
+//   await startMessageConsumer();
+// };
+// init();
 // the signature generator
 app.get('/getsignature',auth,async(req,res)=>{
 
@@ -123,8 +129,43 @@ const setUpStream= async()=>{
     }
   };
 
+  const createToken = async () => {
+    // If this room doesn't exist, it'll be automatically created when the first
+    // client joins
+    const roomName = 'quickstart-room';
+    // Identifier to be used for participant.
+    // It's available as LocalParticipant.identity with livekit-client SDK
+    const participantName = 'quickstart-username';
+  
+    const at = new AccessToken(process.env.LIVEKIT_API_KEY, process.env.LIVEKIT_API_SECRET, {
+      identity: participantName,
+      // Token to expire after 10 minutes
+      ttl: '10m',
+    });
+    at.addGrant({ roomJoin: true, room: roomName });
+  
+    return await at.toJwt();
+  }
+  app.get('/getlivetoken', async (req, res) => {
+    res.send(await createToken());
+  });
 
-
+  app.post('/getlivetoken/new',async(req,res)=>{
+    const {roomName,identity}=req.body;
+    try {
+      const at = new AccessToken(process.env.LIVEKIT_API_KEY, process.env.LIVEKIT_API_SECRET, {
+        identity,
+        // Token to expire after 10 minutes
+        ttl: '10m',
+      });
+      at.addGrant({ roomJoin: true, room: roomName });
+    
+      const token= await at.toJwt();
+      return res.json(token);
+    } catch (error) {
+      res.status(500).json({msg:"internal server error"})
+    }
+  });
 
 
 
