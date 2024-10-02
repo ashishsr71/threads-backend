@@ -129,13 +129,13 @@ const setUpStream= async()=>{
     }
   };
 
-  const createToken = async () => {
+  const createToken = async (username) => {
     // If this room doesn't exist, it'll be automatically created when the first
     // client joins
     const roomName = 'quickstart-room';
     // Identifier to be used for participant.
     // It's available as LocalParticipant.identity with livekit-client SDK
-    const participantName = 'quickstart-username';
+    const participantName = username;
   
     const at = new AccessToken(process.env.LIVEKIT_API_KEY, process.env.LIVEKIT_API_SECRET, {
       identity: participantName,
@@ -146,12 +146,13 @@ const setUpStream= async()=>{
   
     return await at.toJwt();
   }
-  app.get('/getlivetoken', async (req, res) => {
-    res.send(await createToken());
+  app.get('/getlivetoken',auth, async (req, res) => {
+    res.send(await createToken(req.username));
   });
 
-  app.post('/getlivetoken/new',async(req,res)=>{
-    const {roomName,identity}=req.body;
+  app.post('/getlivetoken/new',auth,async(req,res)=>{
+    const {roomName}=req.body;
+    const identity=req.username
     try {
       const at = new AccessToken(process.env.LIVEKIT_API_KEY, process.env.LIVEKIT_API_SECRET, {
         identity,
