@@ -18,20 +18,27 @@ const commentRoute = require('./routes/commentroutes');
 const messagerouter = require('./routes/messageroutes');
 const{io,server,app}=require('./socket/socket');
 const { startMessageConsumer } = require('./kafkaconfig/kafka');
+
 // 
 
 // initalizing socket server
 
 let AccessToken;
+let RoomServiceClient;
+let client;
 (async () => {
+  RoomServiceClient=(await import('livekit-server-sdk')).RoomServiceClient;
   AccessToken = (await import('livekit-server-sdk')).AccessToken;
-  
+   client=new RoomServiceClient(process.env.LIVEKIT_URL,process.env.LIVEKIT_API_KEY,process.env.LIVEKIT_API_SECRET);
   // Now you can use livekit here or in the rest of your code
 })();
+
 // global midddlewares
 app.use(express.json());
 app.use(bodyParser.json())
 app.use(cors());
+
+
 
 // configuring clodinary
 cloudinary.config({
@@ -59,23 +66,7 @@ const timestamp= Math.round((new Date).getTime()/1000);
 });
 // api to serach users
 app.get('/search',SearchUser);
-// upload 
-// app.post('/upload/story',auth,async(req,res)=>{
-//     console.log(req.body)
-//     const video=req.body;
-//     try {
-//         const doc=await Story.create({
-//             userId:req.userId,
-//             video:video
-            
-//         });
-//         res.json(doc)
-//     } catch (error) {
-//         res.status(500).json(error);
-//     }
 
-
-// });
 
 
 
@@ -93,12 +84,7 @@ app.use('/user',postRouter);
 app.use('/user',followRouter);
 app.use('/user',commentRoute)
 app.use('/user',messagerouter)
-// create a post route  
-// create a follower route
-// create comment route
-// create a like unlike route
-// create a follow unfollow route
-// create a 
+
 const setUpStream= async()=>{
     try {
       const changeStream = Story.watch();
@@ -107,15 +93,13 @@ const setUpStream= async()=>{
         if (change.operationType === 'delete') {
           console.log(`Document deleted: ${change.documentKey._id}`);
   
-          // Perform your backend action here
+        
           try {
             
-            // Example: Fetch additional data or perform necessary actions
+           
             const deletedAsset = await Story.findById(change.documentKey._id);
             if (deletedAsset) {
-            //   console.log(`Performing action for deleted document: ${deletedAsset._id}`);
-              // Perform actions here, such as logging or triggering notifications
-             await cloudinary.uploader.destroy(deletedAsset.video.public_id);
+          await cloudinary.uploader.destroy(deletedAsset.video.public_id);
             } else {
               console.log(`Document ${change.documentKey._id} not found.`);
             }
@@ -129,37 +113,38 @@ const setUpStream= async()=>{
     }
   };
 
-  const createToken = async (username) => {
-    // If this room doesn't exist, it'll be automatically created when the first
-    // client joins
+  const createToken = async (username,participantMetadata) => {
+  
     const roomName = 'quickstart-room';
-    // Identifier to be used for participant.
-    // It's available as LocalParticipant.identity with livekit-client SDK
+    
     const participantName = username;
   
     const at = new AccessToken(process.env.LIVEKIT_API_KEY, process.env.LIVEKIT_API_SECRET, {
       identity: participantName,
-      // Token to expire after 10 minutes
+      metadata: participantMetadata,
       ttl: '10m',
     });
-    at.addGrant({ roomJoin: true, room: roomName });
+    at.addGrant({ roomJoin: true, room: roomName,roomAdmin:true });
   
     return await at.toJwt();
-  }
+  };
+
   app.get('/getlivetoken',auth, async (req, res) => {
-    res.send(await createToken(req.username));
+    const metadata=JSON.stringify({role:"host",name:req.username})
+    res.send(await createToken(req.username,metadata));
   });
 
   app.post('/getlivetoken/new',auth,async(req,res)=>{
     const {roomName}=req.body;
     const identity=req.username
+    const participantMetadata=JSON.stringify({role:"listener",name:req.username})
     try {
       const at = new AccessToken(process.env.LIVEKIT_API_KEY, process.env.LIVEKIT_API_SECRET, {
         identity,
-        // Token to expire after 10 minutes
+       metadata:participantMetadata,
         ttl: '10m',
       });
-      at.addGrant({ roomJoin: true, room: roomName });
+      at.addGrant({ roomJoin: true, room: roomName});
     
       const token= await at.toJwt();
       return res.json(token);
@@ -167,20 +152,56 @@ const setUpStream= async()=>{
       res.status(500).json({msg:"internal server error"})
     }
   });
-
+async function unmuteParticipant(roomName, identity) {
+  try {
+    await client.updateParticipant(roomName, identity, undefined, {
+      canPublish: true,
+      canSubscribe: true,
+      canPublishData: true,
+    });
+    // console.log(`Unmuted participant: ${participantIdentity}`);
+  } catch (error) {
+    console.error("Error unmuting participant:", error);
+  }
+};
+async function muteParticipant(roomName, identity) {
+  try {
+    await client.updateParticipant(roomName, identity, undefined, {
+      canPublish: false,
+      canSubscribe: true,
+      canPublishData: true,
+    });
+    // console.log(`Muted participant: ${participantIdentity}`);
+  } catch (error) {
+    console.error("Error muting participant:", error);
+  }
+};
+  app.post("/mute",auth, async (req, res) => {
+    // const { roomName, participantIdentity } = req.body;
+    const roomName="quickstart-room";
+    const participantIdentity="amit"
+    await muteParticipant(roomName, participantIdentity);
+    res.send({ success: true, message: `Participant ${participantIdentity} muted` });
+  });
+  // app.put('/')
+  app.post("/unmute", async (req, res) => {
+      const roomName="quickstart-room";
+    const participantIdentity="amit"
+    await unmuteParticipant(roomName, participantIdentity);
+    res.send({ success: true, message: `Participant ${participantIdentity} unmuted` });
+  });
 
 
 // the database connection
 async function main() {
     await mongoose.connect(process.env.MONGO_URL);
-    // await setUpStream();
+    
     console.log(process.env.MONGO_URL)
     console.log('database connected');
   }
 main();
 
 const port =process.env.PORT ||4000
-// started server
 server.listen(port,()=>{
     console.log('server started')
 });
