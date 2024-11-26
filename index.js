@@ -178,15 +178,15 @@ async function muteParticipant(roomName, identity) {
 };
   app.post("/mute",auth, async (req, res) => {
     // const { roomName, participantIdentity } = req.body;
-    const roomName="quickstart-room";
-    const participantIdentity="amit"
+    const roomName=req.body.roomName;
+    const participantIdentity=req?.body?.username;
     await muteParticipant(roomName, participantIdentity);
     res.send({ success: true, message: `Participant ${participantIdentity} muted` });
   });
   // app.put('/')
-  app.post("/unmute", async (req, res) => {
-      const roomName="quickstart-room";
-    const participantIdentity="amit"
+  app.post("/unmute",auth, async (req, res) => {
+      const roomName=req.body.roomName;
+    const participantIdentity=req?.body?.username;
     await unmuteParticipant(roomName, participantIdentity);
     res.send({ success: true, message: `Participant ${participantIdentity} unmuted` });
   });
