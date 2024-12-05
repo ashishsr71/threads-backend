@@ -92,6 +92,10 @@ lastmessage:{text:{type:String},sender:{type:Schema.Types.Mixed},seen:{type:Bool
 
 },{timestamps:true});
 
+const roomSchema=new Schema({
+  roomName:{type:String},
+  createdBy:{name:{type:String},img:{type:String}},
+});
 
 
 // modals here
@@ -105,10 +109,10 @@ const Follow=mongoose.model('Follow',followSchema);
 const Req=mongoose.model('Req',followreqSchema);
 const Message=mongoose.model('Message',messageSchema);
 const Conversesation=mongoose.model('Conversesation',converSchema);
+const Room=mongoose.model('Room',roomSchema);
 
 
-
-module.exports = {Updates,Comment,Post,Notification,User,Reply,Follow,Req,Message,  Conversesation};
+module.exports = {Updates,Comment,Post,Notification,User,Reply,Follow,Req,Message,  Conversesation,Room};
 
 
 

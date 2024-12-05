@@ -30,7 +30,7 @@ let client;
   RoomServiceClient=(await import('livekit-server-sdk')).RoomServiceClient;
   AccessToken = (await import('livekit-server-sdk')).AccessToken;
    client=new RoomServiceClient(process.env.LIVEKIT_URL,process.env.LIVEKIT_API_KEY,process.env.LIVEKIT_API_SECRET);
-  // Now you can use livekit here or in the rest of your code
+  
 })();
 
 // global midddlewares
@@ -48,11 +48,7 @@ cloudinary.config({
     secure:true
 });
 
-// async function init(){
-//   await startMessageConsumer();
-// };
-// init();
-// the signature generator
+
 app.get('/getsignature',auth,async(req,res)=>{
 
 const timestamp= Math.round((new Date).getTime()/1000);
@@ -65,7 +61,7 @@ const timestamp= Math.round((new Date).getTime()/1000);
 
 });
 // api to serach users
-app.get('/search',SearchUser);
+app.get('/search',auth,SearchUser);
 
 
 
@@ -178,6 +174,8 @@ async function muteParticipant(roomName, identity) {
 };
   app.post("/mute",auth, async (req, res) => {
     // const { roomName, participantIdentity } = req.body;
+    const {isHost}=req.body;
+    if(!isHost)return res.status(401).json({msg:"not authorised"});
     const roomName=req.body.roomName;
     const participantIdentity=req?.body?.username;
     await muteParticipant(roomName, participantIdentity);
@@ -186,6 +184,8 @@ async function muteParticipant(roomName, identity) {
   // app.put('/')
   app.post("/unmute",auth, async (req, res) => {
       const roomName=req.body.roomName;
+      const {isHost}=req.body;
+      if(!isHost)return res.status(401).json({msg:"not authorised"});
     const participantIdentity=req?.body?.username;
     await unmuteParticipant(roomName, participantIdentity);
     res.send({ success: true, message: `Participant ${participantIdentity} unmuted` });

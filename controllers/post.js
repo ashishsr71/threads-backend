@@ -137,6 +137,7 @@ const getForOther=async(req,res)=>{
 const rePost= async(req,res)=>{
     const postId=req.params.id;
     const userId=req.userId;
+    // i have to create a repost schema 
     
 };
 

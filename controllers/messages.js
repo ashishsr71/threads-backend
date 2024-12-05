@@ -50,8 +50,25 @@ const getSingleConversesation=async(req,res)=>{
   } catch (error) {
     res.status(500).json({msg:'internal server error'});
   }
-}
+};
+// include this feature in messages
+const unsendMessage=async(req,res)=>{
+  const {userId}=req;
+  const {messageId,conversesationId}=req.body;
+  const message=await Message.findOne({_id:messageId});
+  if(message.senderId==userId){
+    await Message.deleteOne({_id:messageId});
+    return res.status(201).json({msg:"message deleted"});
+  };
+  res.status(401).json({msg:"unauthorised"})
+};
 
+const seenMessage=async(req,res)=>{
+  const userId=-req.userId;
+  const {conversesationId}=req.body;
+// await Conversesation.findOneAndUpdate()
+
+}
 
 
 module.exports={sendMessage,getConversesations,getSingleConversesation};
