@@ -142,9 +142,17 @@ const rePost= async(req,res)=>{
 
 
 
+const deletePost=async(req,res)=>{
+const {postId}=req.params.id;
+try {
+    const post=await Post.deleteOne({id:postId});
+    res.status(200).json(post);
+} catch (error) {
+    res.status(500).json({msg:"internal server error"})
+}
+};
 
 
 
 
-
-module.exports={createPost,getPosts,getsinglePost,likePost,unlikePost,reply,getforFeed,getForOther};
+module.exports={createPost,getPosts,getsinglePost,likePost,unlikePost,reply,getforFeed,getForOther,deletePost};
