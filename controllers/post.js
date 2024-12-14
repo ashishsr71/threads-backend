@@ -1,4 +1,5 @@
-const {Post ,Reply,Follow}= require('../modals/modals');
+const {Post ,Reply,Follow, Recommend}= require('../modals/modals');
+const { extractHashtags } = require('../utils/findTags');
 
 
 const createPost = async(req,res)=>{
@@ -55,12 +56,14 @@ const likePost=async(req,res)=>{
         if(post.likes.includes(userId)){
             await Post.findOneAndUpdate({_id:postId},{$pull:{likes:userId}});
             const doc= await Post.findOne({_id:postId}).populate({path:"userId",select:'username userImg'}) .exec();
-            console.log("unliked")
+            // console.log("unliked")
             return res.status(200).json({msg:"unliked",doc});
         };
-        console.log('post liked')
+        // console.log('post liked')
         await Post.findOneAndUpdate({_id:postId},{  $push: { likes: userId  },});
-     const doc= await Post.findOne({_id:postId}).populate({path:"userId",select:'username userImg'}) .exec()
+     const doc= await Post.findOne({_id:postId}).populate({path:"userId",select:'username userImg'}) .exec();
+     const hashtags=extractHashtags(doc.text);
+     await Recommend.findOneAndUpdate({userId},{ $addToSet: { tags: { $each: hashtags } } });
         res.status(200).json({msg:'liked',doc});
     } catch (error) {
         res.status(500).json(error);

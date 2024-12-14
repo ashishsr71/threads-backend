@@ -98,6 +98,14 @@ const roomSchema=new Schema({
 });
 
 
+const interestSchema=new Schema({
+  userId:{required:true,type:String},
+  categories:[{type:String}],
+  likes:[{type:String}],
+  tags:[{type:String}]
+});
+
+
 // modals here
 const User= mongoose.model('User',userSchema);
 const Updates= mongoose.model('Story',storySchema);
@@ -110,9 +118,10 @@ const Req=mongoose.model('Req',followreqSchema);
 const Message=mongoose.model('Message',messageSchema);
 const Conversesation=mongoose.model('Conversesation',converSchema);
 const Room=mongoose.model('Room',roomSchema);
+const Recommend=mongoose.model('Recommend',interestSchema)
 
 
-module.exports = {Updates,Comment,Post,Notification,User,Reply,Follow,Req,Message,  Conversesation,Room};
+module.exports = {Updates,Comment,Post,Notification,User,Reply,Follow,Req,Message,  Conversesation,Room,Recommend};
 
 
 
