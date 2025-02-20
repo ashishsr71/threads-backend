@@ -94,7 +94,8 @@ lastmessage:{text:{type:String},sender:{type:Schema.Types.Mixed},seen:{type:Bool
 
 const roomSchema=new Schema({
   roomName:{type:String},
-  createdBy:{name:{type:String},img:{type:String}},
+  participants:[{type:Schema.Types.Mixed}],
+  createdBy:{name:{type:String}},
 });
 
 
@@ -117,11 +118,11 @@ const Follow=mongoose.model('Follow',followSchema);
 const Req=mongoose.model('Req',followreqSchema);
 const Message=mongoose.model('Message',messageSchema);
 const Conversesation=mongoose.model('Conversesation',converSchema);
-const Room=mongoose.model('Room',roomSchema);
+const Rooms=mongoose.model('Room',roomSchema);
 const Recommend=mongoose.model('Recommend',interestSchema)
 
 
-module.exports = {Updates,Comment,Post,Notification,User,Reply,Follow,Req,Message,  Conversesation,Room,Recommend};
+module.exports = {Updates,Comment,Post,Notification,User,Reply,Follow,Req,Message,  Conversesation,Rooms,Recommend};
 
 
 

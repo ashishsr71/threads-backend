@@ -1,3 +1,6 @@
+
+
+
 function extractHashtags(description) {
     
     const hashtags = description.match(/#(\w+)/g);
@@ -5,4 +8,5 @@ function extractHashtags(description) {
     return hashtags ? hashtags.map(tag => tag.slice(1)) : [];
   };
   
+
 module.exports={extractHashtags};

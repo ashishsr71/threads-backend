@@ -16,12 +16,12 @@ const server = http.createServer(app);
 });
 
 const userSocketMap={};
-const rooms={};
+// const rooms={};
 io.on('connection', (socket) => {
   const userId=socket.handshake.query.userId;
   // console.log(socket.handshake.query.userId);
   if(userId!="undefined")userSocketMap[userId]=socket.id;
-  // console.log('a user connected',userId);
+  
 
  
   
