@@ -39,7 +39,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(bodyParser.json())
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: `${process.env.FRONTEND_PRODUCTION}`,
   credentials: true
 }));
 
@@ -105,7 +105,7 @@ app.use('/user',messagerouter)
   };
 
   app.get('/getlivetoken',auth, async (req, res) => {
-    const metadata=JSON.stringify({role:"host",name:req.username})
+    const metadata=JSON.stringify({role:"host",name:req.username,userId:req.userId});
    const r= await Rooms.create({roomName:req.body.roomName,participants:[{userId:req.userId,
       name:req.username,
       role:"Host",

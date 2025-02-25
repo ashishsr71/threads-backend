@@ -96,7 +96,8 @@ const roomSchema=new Schema({
   roomName:{type:String},
   participants:[{type:Schema.Types.Mixed}],
   createdBy:{type:String},
-  isActive:{type:Boolean}
+  isActive:{type:Boolean},
+  
 });
 
 
