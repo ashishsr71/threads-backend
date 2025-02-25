@@ -95,7 +95,8 @@ lastmessage:{text:{type:String},sender:{type:Schema.Types.Mixed},seen:{type:Bool
 const roomSchema=new Schema({
   roomName:{type:String},
   participants:[{type:Schema.Types.Mixed}],
-  createdBy:{name:{type:String}},
+  createdBy:{type:String},
+  isActive:{type:Boolean}
 });
 
 

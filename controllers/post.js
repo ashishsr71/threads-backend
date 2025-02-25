@@ -7,7 +7,7 @@ const userId= req.userId;
 const text = req.body?.text;
 const media = req.body?.media;
 
-console.log(media)
+// console.log(media)
 try {
     const post = await Post.create({userId,likes:[],media:media,text});
     res.status(200).json(post);
@@ -116,7 +116,7 @@ try {
     const users= await Follow.findOne({userId});
     const following= users.following;
     const posts= await Post.find({ userId: { $in: following } }).populate({path:"userId",select:'username userImg'}) .exec();
-    console.log(posts)
+    // console.log(posts)
     res.status(200).json(posts);
 } catch (error) {
     res.status(500).json({msg:"internal error"})

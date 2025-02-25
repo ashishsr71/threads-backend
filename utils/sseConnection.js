@@ -1,5 +1,5 @@
 const SSE=require("express-sse");
-const { Follow } = require("../modals/modals");
+const { Follow, Rooms } = require("../modals/modals");
 
 
 
@@ -14,11 +14,13 @@ async function sendToFollowers(req,res){
     };
     
     sseStreams.get(userId).init(req,res);
-    
+    const interval = setInterval(() => {
+        sseStreams.get(userId).send({ type: "heartbeat", message: "ping" });
+    }, 30000);
   
     req.on('close',()=>{
         console.log(`connection closed for userId ${userId}`)
-        // clearInterval(intervalId)
+        clearInterval(interval)
     })
     
     };
@@ -26,15 +28,20 @@ async function sendToFollowers(req,res){
 async function sendEvent(userId,roomInfo){
 
 const userData=await Follow.findOne({userId});
+const requiredArray=userData.followers.map(id=>id.toString())
 
 
-userData?.followers.forEach(follower => {
+requiredArray.forEach(follower => {
     if(sseStreams.has(follower)){
-        sseStreams.get(follower).send({conference:roomInfo})
-    }
+        sseStreams.get(follower).send({...roomInfo._doc});
+    };
 });
 
 };
+async function fetchConferences(id){
+const uData=await Follow.findOne({userId:id});
+const rooms=await Rooms.find({createdBy:{$in:uData.following},isActive:true});
+return rooms;
+}
 
-
-    module.exports={sendToFollowers,sendEvent};
+    module.exports={sendToFollowers,sendEvent,fetchConferences};

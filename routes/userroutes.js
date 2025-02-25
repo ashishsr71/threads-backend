@@ -17,6 +17,27 @@ router.post('/refreshtoken',async(req,res)=>{
     return res.status(200).json(token);
    
 });
+
+
+router.get('/me',async(req,res)=>{
+const {refreshToken}=req.cookies;
+if(!refreshToken){
+           res.cookie("access_token",null);
+        //    res.cookie("refresh_token",null)
+    return res.status(401).json({msg:"unauthorised"})
+};
+try {
+    const decode=jwt.verify(refreshToken,"jai baba sawath nath");
+    const{userId,username}=decode;
+    const token=jwt.sign({userId,username},"jai baba sawath nath",{expiresIn:"1d"});
+    res.cookie("access_token",token,{httpOnly:true,maxAge:24*60*60*1000,sameSite:"strict"});
+    res.status(200).json({token,userId,username});
+} catch (error) {
+    res.status(401).json({msg:"unauthorized"})
+};
+
+
+});
 router.post('/login',Login);
 router.post('/signup',Signup);
 router.post('/profilepic',auth,AddImage)

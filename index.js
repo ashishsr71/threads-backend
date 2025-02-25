@@ -4,7 +4,7 @@ const express = require('express');
 const cloudinary= require('cloudinary').v2;
 const cors=require('cors');
 const mongoose =require('mongoose')
-const {Updates:Story,Notification,Post,Comment, Rooms}= require('./modals/modals')
+const {Rooms}= require('./modals/modals')
 const bodyParser = require('body-parser');
 const {auth}= require('./middlewares/auth');
 const router=require('./routes/signup');
@@ -14,13 +14,13 @@ const postRouter= require('./routes/postroutes');
 const followRouter= require('./routes/followroute')
 const {SearchUser} = require('./controllers/user');
 const commentRoute = require('./routes/commentroutes');
-
+const cookieParser=require('cookie-parser');
 const messagerouter = require('./routes/messageroutes');
-const{io,server,app}=require('./socket/socket');
+const{server,app}=require('./socket/socket');
 const { startMessageConsumer } = require('./kafkaconfig/kafka');
-const { sendToFollowers, sendEvent } = require('./utils/sseConnection');
+const { sendToFollowers, sendEvent, fetchConferences } = require('./utils/sseConnection');
 
-// 
+
 
 // initalizing socket server
 
@@ -37,8 +37,11 @@ let client;
 // global midddlewares
 app.use(express.json());
 app.use(bodyParser.json())
-app.use(cors());
-
+app.use(cors({
+  origin: 'http://localhost:5173',
+  credentials: true
+}));
+// app.use(cookieParser())
 
 
 // configuring clodinary
@@ -58,7 +61,7 @@ const timestamp= Math.round((new Date).getTime()/1000);
         res.json({timestamp,signature})
     } catch (error) {
         res.status(500).json({error})
-    }
+    };
 
 });
 // api to serach users
@@ -82,33 +85,7 @@ app.use('/user',followRouter);
 app.use('/user',commentRoute)
 app.use('/user',messagerouter)
 
-// const setUpStream= async()=>{
-//     try {
-//       const changeStream = Story.watch();
-  
-//       changeStream.on('change', async (change) => {
-//         if (change.operationType === 'delete') {
-//           console.log(`Document deleted: ${change.documentKey._id}`);
-  
-        
-//           try {
-            
-           
-//             const deletedAsset = await Story.findById(change.documentKey._id);
-//             if (deletedAsset) {
-//           await cloudinary.uploader.destroy(deletedAsset.video.public_id);
-//             } else {
-//               console.log(`Document ${change.documentKey._id} not found.`);
-//             }
-//           } catch (error) {
-//             console.error('Error performing action:', error);
-//           }
-//         }
-//       });
-//     } catch (error) {
-//       console.error('Error setting up change stream:', error);
-//     }
-//   };
+
  
   const createToken = async (username,participantMetadata,roomId) => {
   
@@ -132,7 +109,7 @@ app.use('/user',messagerouter)
       name:req.username,
       role:"Host",
       imgUrl:""
-    }],createdBy:{name:req.username}});
+    }],createdBy:req.userId,isActive:true});
     await sendEvent(req.userId,r)
     res.send(await createToken(req.username,metadata,r._id));
   });
@@ -167,7 +144,7 @@ async function unmuteParticipant(roomName, identity) {
       canSubscribe: true,
       canPublishData: true,
     });
-    // console.log(`Unmuted participant: ${participantIdentity}`);
+   
   } catch (error) {
     console.error("Error unmuting participant:", error);
   }
@@ -197,16 +174,24 @@ async function muteParticipant(roomName, identity) {
   });
   // route to unmute a participant if you are a host
   app.post("/unmute",auth, async (req, res) => {
-      const roomName=req.body.rooId;
+      const roomName=req.body.roomId;
       const {isHost}=req.body;
       if(!isHost)return res.status(401).json({msg:"not authorised"});
     const participantIdentity=req?.body?.username;
     await unmuteParticipant(roomName, participantIdentity);
     res.send({ success: true, message: `Participant ${participantIdentity} unmuted` });
   });
-
+// routes to send server events through sse
 app.get('/events',auth,sendToFollowers);
-
+app.get('/conferences',auth,async(req,res)=>{
+  const userId=req.userId;
+  try {
+  const rooms=await  fetchConferences(userId);
+  res.status(200).json(rooms);
+  } catch (error) {
+    res.status(500).json({message:"internal server error"});
+  }
+ })
 
 
 

@@ -4,9 +4,10 @@ const jwt = require('jsonwebtoken');
 
 
   const auth= async(req,res,next)=>{
+   
 const token =req.headers.token;
 if(!token){
-    return res.status(401).json({message:'unauthorized'});
+    return res.status(401).json({message:'unauthorized1'});
 }
 try {
     const decoded=jwt.verify(token,'jai baba sawath nath');
