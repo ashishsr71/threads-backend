@@ -22,11 +22,11 @@ router.post('/refreshtoken',async(req,res)=>{
 router.get('/me',async(req,res)=>{
 const refreshToken=req.cookies.refresh_token;
 
-// console.log(refreshToken)
+console.log(refreshToken)
 if(!refreshToken){
            res.cookie("access_token",null);
            res.cookie("refresh_token",null)
-    return res.status(401).json({msg:"unauthorised"})
+    return res.status(401).json({msg:"unauthorised",refreshToken})
 };
 try {
     const decode=jwt.verify(refreshToken,"jai baba sawath nath");

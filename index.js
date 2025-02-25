@@ -39,7 +39,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(bodyParser.json())
 app.use(cors({
-  origin: `${process.env.FRONTEND_PRODUCTION}`,
+  origin: `${process.env.MODE=="production"?process.env.FRONTEND_PRODUCTION:"http://localhost:5173"}`,
   credentials: true
 }));
 
