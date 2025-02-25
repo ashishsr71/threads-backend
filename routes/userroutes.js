@@ -32,7 +32,7 @@ try {
     const decode=jwt.verify(refreshToken,"jai baba sawath nath");
     const{userId,username}=decode;
     const token=jwt.sign({userId,username},"jai baba sawath nath",{expiresIn:"1d"});
-    res.cookie("access_token",token,{httpOnly:false,maxAge:24*60*60*1000,sameSite:"strict"});
+    res.cookie("access_token",token,{httpOnly:true,maxAge:24*60*60*1000,sameSite:"strict"});
     res.status(200).json({token,userId,username});
 } catch (error) {
     res.status(401).json({msg:"unauthorized"})
