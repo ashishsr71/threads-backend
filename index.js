@@ -104,7 +104,7 @@ app.use('/user',messagerouter)
     return await at.toJwt();
   };
 
-  app.get('/getlivetoken',auth, async (req, res) => {
+  app.post('/getlivetoken',auth, async (req, res) => {
     const metadata=JSON.stringify({role:"host",name:req.username,userId:req.userId});
    const r= await Rooms.create({roomName:req.body.roomName,participants:[{userId:req.userId,
       name:req.username,
@@ -116,7 +116,7 @@ app.use('/user',messagerouter)
   });
 
   app.post('/getlivetoken/new',auth,async(req,res)=>{
-    const {roomName,roomId}=req.body;
+    const {roomId}=req.body;
     const identity=req.username
     const participantMetadata=JSON.stringify({role:"listener",name:req.username})
    
@@ -154,12 +154,13 @@ async function unmuteParticipant(roomName, identity) {
 
 async function muteParticipant(roomName, identity) {
   try {
+    console.log(roomName,identity)
     await client.updateParticipant(roomName, identity, undefined, {
       canPublish: false,
       canSubscribe: true,
       canPublishData: true,
     });
-    // console.log(`Muted participant: ${participantIdentity}`);
+    
   } catch (error) {
     console.error("Error muting participant:", error);
   }
@@ -169,7 +170,7 @@ async function muteParticipant(roomName, identity) {
     const {isHost}=req.body;
     if(!isHost)return res.status(401).json({msg:"not authorised"});
     const roomName=req.body.roomId;
-    const participantIdentity=req?.body?.username;
+    const participantIdentity=req?.body?.participantIdentity;
     await muteParticipant(roomName, participantIdentity);
     res.send({ success: true, message: `Participant ${participantIdentity} muted` });
   });
@@ -178,7 +179,7 @@ async function muteParticipant(roomName, identity) {
       const roomName=req.body.roomId;
       const {isHost}=req.body;
       if(!isHost)return res.status(401).json({msg:"not authorised"});
-    const participantIdentity=req?.body?.username;
+    const participantIdentity=req?.body?.participantIdentity;
     await unmuteParticipant(roomName, participantIdentity);
     res.send({ success: true, message: `Participant ${participantIdentity} unmuted` });
   });
@@ -194,7 +195,16 @@ app.get('/conferences',auth,async(req,res)=>{
   }
  })
 
-
+app.post("/leave",auth,async(req,res)=>{
+  const roomId=req.body.roomId;
+  const userId=req.userId;
+  const room=await Rooms.findOne({createdBy:userId});
+  if(!room){
+    return res.status(400).json({msg:"Bad request"});
+  };
+  await Rooms.deleteOne({_id:roomId});
+  res.status(200).json({msg:"room destroyed"})
+})
 
 // the database connection
 async function main() {
