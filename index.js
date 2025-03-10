@@ -112,12 +112,13 @@ app.use('/user',messagerouter)
       imgUrl:""
     }],createdBy:req.userId,isActive:true});
     await sendEvent(req.userId,r)
+    // console.log(r._id)
     res.send(await createToken(req.username,metadata,r._id));
   });
 
   app.post('/getlivetoken/new',auth,async(req,res)=>{
     const {roomId}=req.body;
-    const identity=req.username
+    const identity=req.username;
     const participantMetadata=JSON.stringify({role:"listener",name:req.username})
    
     try {
@@ -126,7 +127,7 @@ app.use('/user',messagerouter)
        metadata:participantMetadata,
         ttl: '10m',
       });
-      at.addGrant({ roomJoin: true, room: roomId});
+      at.addGrant({ roomJoin: true, room: roomId,canPublish:false});
       await Rooms.updateOne({_id:roomId},{$push:{participants:{name:req.username,role:"listner",imgUrl:"",
         userId:req.userId
       }}});
@@ -138,9 +139,9 @@ app.use('/user',messagerouter)
   });
 
   // 
-async function unmuteParticipant(roomName, identity) {
+async function unmuteParticipant(roomId, identity) {
   try {
-    await client.updateParticipant(roomName, identity, undefined, {
+    await client.updateParticipant(roomId, identity, undefined, {
       canPublish: true,
       canSubscribe: true,
       canPublishData: true,
@@ -152,10 +153,10 @@ async function unmuteParticipant(roomName, identity) {
 };
 
 
-async function muteParticipant(roomName, identity) {
+async function muteParticipant(roomId, identity) {
   try {
-    console.log(roomName,identity)
-    await client.updateParticipant(roomName, identity, undefined, {
+    // console.log(roomName,identity)
+    await client.updateParticipant(roomId, identity, undefined, {
       canPublish: false,
       canSubscribe: true,
       canPublishData: true,
@@ -169,18 +170,18 @@ async function muteParticipant(roomName, identity) {
   app.post("/mute",auth, async (req, res) => {
     const {isHost}=req.body;
     if(!isHost)return res.status(401).json({msg:"not authorised"});
-    const roomName=req.body.roomId;
+    const roomId=req.body.roomId;
     const participantIdentity=req?.body?.participantIdentity;
-    await muteParticipant(roomName, participantIdentity);
+    await muteParticipant(roomId, participantIdentity);
     res.send({ success: true, message: `Participant ${participantIdentity} muted` });
   });
   // route to unmute a participant if you are a host
   app.post("/unmute",auth, async (req, res) => {
-      const roomName=req.body.roomId;
+      const roomId=req.body.roomId;
       const {isHost}=req.body;
       if(!isHost)return res.status(401).json({msg:"not authorised"});
     const participantIdentity=req?.body?.participantIdentity;
-    await unmuteParticipant(roomName, participantIdentity);
+    await unmuteParticipant(roomId, participantIdentity);
     res.send({ success: true, message: `Participant ${participantIdentity} unmuted` });
   });
 // routes to send server events through sse
@@ -202,9 +203,17 @@ app.post("/leave",auth,async(req,res)=>{
   if(!room){
     return res.status(400).json({msg:"Bad request"});
   };
-  await Rooms.deleteOne({_id:roomId});
-  res.status(200).json({msg:"room destroyed"})
-})
+  try {
+    await client.deleteRoom(roomId);
+    await Rooms.deleteOne({_id:roomId});
+    res.status(200).json({msg:"room destroyed"})
+  } catch (error) {
+    console.log(error);
+    console.log(roomId +"is this")
+    res.status(500).json({msg:"internal server error"})
+  }
+
+});
 
 // the database connection
 async function main() {
