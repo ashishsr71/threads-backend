@@ -109,8 +109,17 @@ res.status(200).json(users)
 //     }
 // };
 
+const logout = async (req, res) => {
+    // const refreshToken=req.cookies.refresh_token;
+    // console.log(refreshToken);
+    //   res.clearCookie("access_token");
+	// 	res.clearCookie("refresh_token");
+           res.cookie("access_token",null);
+           res.cookie("refresh_token",null);
+    res.json({ msg: "Logged out successfully" });
+};
 
 
 
  
- module.exports= {Signup,Login,SearchUser,AddImage};
+ module.exports= {Signup,Login,SearchUser,AddImage,logout};

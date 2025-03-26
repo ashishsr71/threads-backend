@@ -1,7 +1,8 @@
-const {Login, Signup, AddImage}= require('../controllers/user');
+const {Login, Signup, AddImage, logout}= require('../controllers/user');
 const router = require('express').Router();
 const jwt= require('jsonwebtoken');
 const { auth } = require('../middlewares/auth');
+
 
 router.post('/refreshtoken',async(req,res)=>{
     const refreshtoken=req.body.refreshToken;
@@ -22,8 +23,9 @@ router.post('/refreshtoken',async(req,res)=>{
 router.get('/me',async(req,res)=>{
 const refreshToken=req.cookies.refresh_token;
 
-console.log(refreshToken)
+
 if(!refreshToken){
+    // console.log(refreshToken)
            res.cookie("access_token",null);
            res.cookie("refresh_token",null)
     return res.status(401).json({msg:"unauthorised",refreshToken})
@@ -31,11 +33,14 @@ if(!refreshToken){
 try {
     const decode=jwt.verify(refreshToken,"jai baba sawath nath");
     const{userId,username}=decode;
-    const token=jwt.sign({userId,username},"jai baba sawath nath",{expiresIn:"1d"});
-    res.cookie("access_token",token,{httpOnly:true,maxAge:24*60*60*1000,sameSite:"None",secure:true});
+   const token = jwt.sign({userId,username:username},"jai baba sawath nath",{expiresIn:"1d"});
+   const refresh_Token=jwt.sign({userId,username:username},"jai baba sawath nath",{expiresIn:"5d"});
+     res.cookie('access_token',token,{httpOnly:true,maxAge:24*60*60*1000,sameSite:"None",secure:true});
+     res.cookie('refresh_token',refresh_Token,{httpOnly:true,maxAge:5*24*60*60*1000,sameSite:"None",secure:true});
     res.status(200).json({token,userId,username});
 } catch (error) {
-    res.status(401).json({msg:"unauthorized"})
+    // console.log(error)
+    res.status(401).json({msg:"unauthorized",})
 };
 
 
@@ -43,4 +48,5 @@ try {
 router.post('/login',Login);
 router.post('/signup',Signup);
 router.post('/profilepic',auth,AddImage)
+router.post('/logout',logout);
 module.exports=router;

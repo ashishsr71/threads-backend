@@ -200,6 +200,7 @@ app.post("/leave",auth,async(req,res)=>{
   const roomId=req.body.roomId;
   const userId=req.userId;
   const room=await Rooms.findOne({createdBy:userId});
+  console.log(room);
   if(!room){
     return res.status(400).json({msg:"Bad request"});
   };
@@ -209,7 +210,7 @@ app.post("/leave",auth,async(req,res)=>{
     res.status(200).json({msg:"room destroyed"})
   } catch (error) {
     console.log(error);
-    console.log(roomId +"is this")
+    // console.log(roomId +"is this")
     res.status(500).json({msg:"internal server error"})
   }
 
