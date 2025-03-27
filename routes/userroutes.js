@@ -1,4 +1,4 @@
-const {Login, Signup, AddImage, logout}= require('../controllers/user');
+const {Login, Signup, AddImage, logout, forgotPassword}= require('../controllers/user');
 const router = require('express').Router();
 const jwt= require('jsonwebtoken');
 const { auth } = require('../middlewares/auth');
@@ -49,4 +49,5 @@ router.post('/login',Login);
 router.post('/signup',Signup);
 router.post('/profilepic',auth,AddImage)
 router.post('/logout',logout);
+router.post('/forgot-password',forgotPassword);
 module.exports=router;

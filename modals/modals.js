@@ -108,6 +108,11 @@ const interestSchema=new Schema({
   tags:[{type:String}]
 });
 
+const repostSchema=new Schema({
+  userId:{required:true,type:Schema.Types.ObjectId,ref:"User"},
+  postId:{required:true,type:Schema.Types.ObjectId,ref:"Post"}
+  
+},{timestamps:true});
 
 // modals here
 const User= mongoose.model('User',userSchema);
@@ -122,9 +127,9 @@ const Message=mongoose.model('Message',messageSchema);
 const Conversesation=mongoose.model('Conversesation',converSchema);
 const Rooms=mongoose.model('Room',roomSchema);
 const Recommend=mongoose.model('Recommend',interestSchema)
+const Repost=mongoose.model("Repost",repostSchema);
 
-
-module.exports = {Updates,Comment,Post,Notification,User,Reply,Follow,Req,Message,  Conversesation,Rooms,Recommend};
+module.exports = {Repost,Updates,Comment,Post,Notification,User,Reply,Follow,Req,Message,  Conversesation,Rooms,Recommend};
 
 
 

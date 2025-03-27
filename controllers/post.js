@@ -1,4 +1,4 @@
-const {Post ,Reply,Follow, Recommend}= require('../modals/modals');
+const {Post ,Reply,Follow, Recommend, Repost}= require('../modals/modals');
 const { extractHashtags } = require('../utils/findTags');
 
 
@@ -140,7 +140,16 @@ const getForOther=async(req,res)=>{
 const rePost= async(req,res)=>{
     const postId=req.params.id;
     const userId=req.userId;
-    // i have to create a repost schema 
+    try {
+        const doesPostExist=await Post.findOne({postId});
+        if(!doesPostExist){
+            return res.status(400).json({msg:"Bad request"});
+        }
+        const post=await Repost.create({postId,userId});
+        res.status(200).json(post);
+    } catch (error) {
+        res.status(500).json({msg:"Someting went wrong while posting"})
+    }
     
 };
 
@@ -148,15 +157,17 @@ const rePost= async(req,res)=>{
 
 const deletePost=async(req,res)=>{
 const {postId}=req.params.id;
+const userId=req.userId;
 try {
-    const post=await Post.deleteOne({id:postId});
-    res.status(200).json(post);
+    const post=await Post.deleteOne({id:postId,userId});
+    
+    res.status(200).json({msg:"Post deleted succesfully"});
 } catch (error) {
-    res.status(500).json({msg:"internal server error"})
+    res.status(500).json({msg:"Something went wrong"})
 }
 };
 
 
 
 
-module.exports={createPost,getPosts,getsinglePost,likePost,unlikePost,reply,getforFeed,getForOther,deletePost};
+module.exports={createPost,getPosts,getsinglePost,likePost,unlikePost,reply,getforFeed,getForOther,deletePost,rePost};

@@ -19,7 +19,7 @@ const messagerouter = require('./routes/messageroutes');
 const{server,app}=require('./socket/socket');
 const { startMessageConsumer } = require('./kafkaconfig/kafka');
 const { sendToFollowers, sendEvent, fetchConferences } = require('./utils/sseConnection');
-
+const ratelimiter=require("express-rate-limit");
 
 
 // initalizing socket server
@@ -34,6 +34,14 @@ let client;
   
 })();
 
+
+// rate limiter config
+const limiter=ratelimiter({
+  windowMs:15*60*1000,
+  max:100,
+  message:"Maximum Rate limit crossed"
+})
+
 // global midddlewares
 app.use(express.json());
 app.use(cookieParser());
@@ -42,7 +50,7 @@ app.use(cors({
   origin: `${process.env.MODE=="production"?process.env.FRONTEND_PRODUCTION:"http://localhost:5173"}`,
   credentials: true
 }));
-
+app.use("/user/forgot-password",limiter);
 
 
 // configuring clodinary

@@ -110,16 +110,25 @@ res.status(200).json(users)
 // };
 
 const logout = async (req, res) => {
-    // const refreshToken=req.cookies.refresh_token;
-    // console.log(refreshToken);
-    //   res.clearCookie("access_token");
-	// 	res.clearCookie("refresh_token");
+   
            res.cookie("access_token",null);
            res.cookie("refresh_token",null);
     res.json({ msg: "Logged out successfully" });
 };
+const forgotPassword=async(req,res)=>{
+const {email}=req.body;
+if(!email){
+    return res.status(400).json({message:"Enter valid email address"});
+};
+const user=await User.findOne({email});
+if(!user){
+    return res.status(400).json({message:"Enter valid email address"});
+}
 
+
+
+};
 
 
  
- module.exports= {Signup,Login,SearchUser,AddImage,logout};
+ module.exports= {Signup,Login,SearchUser,AddImage,logout,forgotPassword};
