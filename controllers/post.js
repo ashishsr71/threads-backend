@@ -27,7 +27,7 @@ const getPosts=async(req,res)=>{
     const userId= req.userId;
    
     try {
-        const posts= await Post.find({userId});
+        const posts= await Post.find({userId}).populate({path:"userId",select:'username userImg'}) .exec();
         res.status(200).json(posts);
     } catch (error) {
         res.status(500).json(error);
