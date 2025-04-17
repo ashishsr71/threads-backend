@@ -25,8 +25,23 @@ try {
     });
     await Follow.create({followers:[],following:[],userId:doc._id,private:false,username:username});
    const token=  jwt.sign({userId:doc._id,username:doc.username},"jai baba sawath nath",{expiresIn:'1d'});
-   res.cookie('access_token',token,{httpOnly:true,maxAge:24*60*60*1000,sameSite:"None",secure:true});
-   res.status(200).json({token,userId:doc._id,username:doc.username});
+//    res.cookie('access_token',token,{httpOnly:true,maxAge:24*60*60*1000,sameSite:"None",secure:true});
+const refreshToken=jwt.sign({userId:user._id,username:user.username},"jai baba sawath nath",{expiresIn:"5d"});   
+res.cookie('access_token', token, {
+    httpOnly: true,
+    maxAge: 24 * 60 * 60 * 1000,
+    sameSite: "None",
+    secure: true,
+    path: '/'
+  });
+  res.cookie('refresh_token', refreshToken, {
+    httpOnly: true,
+    maxAge: 5 * 24 * 60 * 60 * 1000,
+    sameSite: "None",
+    secure: true,
+    path: '/'
+  });
+res.status(200).json({token,userId:doc._id,username:doc.username});
    
 
 } catch (error) {
@@ -59,8 +74,22 @@ const Login=async(req,res)=>{
         };
         const token = jwt.sign({userId:user._id,username:user.username},"jai baba sawath nath",{expiresIn:"1d"});
         const refreshToken=jwt.sign({userId:user._id,username:user.username},"jai baba sawath nath",{expiresIn:"5d"});
-        res.cookie('access_token',token,{httpOnly:true,maxAge:24*60*60*1000,sameSite:"None",secure:true});
-        res.cookie('refresh_token',refreshToken,{httpOnly:true,maxAge:5*24*60*60*1000,sameSite:"None",secure:true});
+        // res.cookie('access_token',token,{httpOnly:true,maxAge:24*60*60*1000,sameSite:"None",secure:true});
+        // res.cookie('refresh_token',refreshToken,{httpOnly:true,maxAge:5*24*60*60*1000,sameSite:"None",secure:true});
+        res.cookie('access_token', token, {
+            httpOnly: true,
+            maxAge: 24 * 60 * 60 * 1000,
+            sameSite: "None",
+            secure: true,
+            path: '/'
+          });
+          res.cookie('refresh_token', refreshToken, {
+            httpOnly: true,
+            maxAge: 5 * 24 * 60 * 60 * 1000,
+            sameSite: "None",
+            secure: true,
+            path: '/'
+          });
         res.status(200).json({token,userId:user._id,refreshToken,username:user.username});
         
     } catch (error) {
@@ -111,9 +140,20 @@ res.status(200).json(users)
 
 const logout = async (req, res) => {
    
-           res.cookie("access_token",null);
-           res.cookie("refresh_token",null);
-    res.json({ msg: "Logged out successfully" });
+    res.clearCookie("access_token", {
+        httpOnly: true,
+        sameSite: "None",
+        secure: true,
+        path: "/"
+      });
+      res.clearCookie("refresh_token", {
+        httpOnly: true,
+        sameSite: "None",
+        secure: true,
+        path: "/"
+      });
+      res.json({ msg: "Logged out successfully" });
+   
 };
 const forgotPassword=async(req,res)=>{
 const {email}=req.body;
