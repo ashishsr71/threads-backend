@@ -27,8 +27,18 @@ console.log(refreshToken)
 
 if(!refreshToken){
     // console.log(refreshToken)
-           res.cookie("access_token",null);
-           res.cookie("refresh_token",null)
+    res.clearCookie("access_token", {
+        httpOnly: true,
+        sameSite: "None",
+        secure: true,
+        path: "/"
+      });
+      res.clearCookie("refresh_token", {
+        httpOnly: true,
+        sameSite: "None",
+        secure: true,
+        path: "/"
+      });
     return res.status(401).json({msg:"unauthorised",refreshToken})
 };
 try {
@@ -54,7 +64,18 @@ try {
       });
     res.status(200).json({token,userId,username});
 } catch (error) {
-    // console.log(error)
+    res.clearCookie("access_token", {
+        httpOnly: true,
+        sameSite: "None",
+        secure: true,
+        path: "/"
+      });
+      res.clearCookie("refresh_token", {
+        httpOnly: true,
+        sameSite: "None",
+        secure: true,
+        path: "/"
+      });
     res.status(401).json({msg:"unauthorized",})
 };
 

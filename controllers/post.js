@@ -1,4 +1,4 @@
-const {Post ,Reply,Follow, Recommend, Repost}= require('../modals/modals');
+const {Post ,Reply,Follow, Recommend, Repost, Comment}= require('../modals/modals');
 const { extractHashtags } = require('../utils/findTags');
 
 
@@ -156,18 +156,38 @@ const rePost= async(req,res)=>{
 
 
 const deletePost=async(req,res)=>{
-const {postId}=req.params.id;
+const {postId}=req.params;
 const userId=req.userId;
 try {
-    const post=await Post.deleteOne({id:postId,userId});
+    const post=await Post.deleteOne({_id:postId,userId});
     
     res.status(200).json({msg:"Post deleted succesfully"});
 } catch (error) {
+    console.log(error)
     res.status(500).json({msg:"Something went wrong"})
 }
 };
 
+const getRepliedPosts = async (req, res) => {
+    const userId = req.userId;
+  
+    // 1. Find all comments where 'replies' includes a userId match
+    const comments = await Comment.find({
+      "by.userId":userId
+    });
+  
+    // 2. Extract all postIds from the comments
+    const postIds = comments.map(comment => comment.postId);
+  
+    // 3. Find posts whose _id matches any of those postIds
+    const posts = await Post.find({
+      _id: { $in: postIds }
+    });
+  
+    console.log(posts);
+    res.status(200).json({ posts, comments });
+  };
+  
 
 
-
-module.exports={createPost,getPosts,getsinglePost,likePost,unlikePost,reply,getforFeed,getForOther,deletePost,rePost};
+module.exports={getRepliedPosts,createPost,getPosts,getsinglePost,likePost,unlikePost,reply,getforFeed,getForOther,deletePost,rePost};
