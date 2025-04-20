@@ -61,7 +61,7 @@ const getSingleConversesation=async(req,res)=>{
     // console.log("this is " + reciepentId)
     // console.log(socketId)
     if(socketId){
-      // io.to(socketId).emit('seen',conversesation);
+      io.to(socketId).emit('seen',conversesation);
       // console.log("emitted")
     }
 
