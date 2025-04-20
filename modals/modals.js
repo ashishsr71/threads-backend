@@ -81,7 +81,7 @@ to:{type:Schema.Types.Mixed},
 conversesationId:{type:String,required:true},
 senderId:{type:String,required:true},
 recieverId:{type:String},
-
+seen:{type:Boolean}
 
 },{timestamps:true});
 

@@ -182,7 +182,7 @@ const getRepliedPosts = async (req, res) => {
     // 3. Find posts whose _id matches any of those postIds
     const posts = await Post.find({
       _id: { $in: postIds }
-    });
+    }).populate({path:"userId",select:'username userImg'}).exec();
   
     console.log(posts);
     res.status(200).json({ posts, comments });
