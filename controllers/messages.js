@@ -95,20 +95,29 @@ const seenMessage=async(req,res)=>{
 const messageSeen=async(req,res)=>{
   // const messageId=req.params.messageId;
   const userId=req.userId;
-  const converId=req.params.converId;
-  if(!converId){
-    return res.status(400).json({msg:"bad request"});
-  }
-const conversesation=await Conversesation.findOne({_id:converId});
-if(!conversesation)return res.status(400).json({msg:"no such conversesation"});
-if(conversesation.lastmessage.seen==true)return res.status(200)
+  const {messageId}=req.body;
 
-  const unSeenMessages=await Message.updateMany({conversesationId:converId,seen:false,recieverId:userId},{
-    $set:{seen:true}
-  });
+if(!messageId){
+  return res.status(400).json({msg:"bad request"});
+}
+
+const message=await Message.findOneAndUpdate({_id:messageId,recieverId:userId},{
+  $set:{seen:true}
+});
+// console.log(message)
+const socketId=getSocketId(message.senderId);
+if(socketId){
+  // console.log(socketId)
+  // console.log(userId==message.senderId)
+  io.to(socketId).emit('sone',message);
+}
 
 
-  res.status(200).json(unSeenMessages);
+res.status(200).json({msg:"seen"})
+
+
+
+  
   
  
 
@@ -116,5 +125,9 @@ if(conversesation.lastmessage.seen==true)return res.status(200)
 
 }
 
+// const seenSingleMessage=async(req,res)=>{
+//   const {messageId}=req.body;
+//   if(!messageId)
+// }
 
 module.exports={sendMessage,getConversesations,getSingleConversesation,messageSeen};

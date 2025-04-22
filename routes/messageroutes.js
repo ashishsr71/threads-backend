@@ -8,7 +8,8 @@ const messagerouter= require('express').Router();
 messagerouter.post('/sendmessage',auth,sendMessage);
 messagerouter.get('/getconver',auth,getConversesations);
 messagerouter.get('/getcurrent/:id/:reciepentId',auth,getSingleConversesation);
-messagerouter.put('/seen/:converId',auth,messageSeen)
+messagerouter.put('/seen',auth,messageSeen)
+// messagerouter.put('/sone',auth,seenSingleMessage)
 
 
 module.exports=messagerouter;
