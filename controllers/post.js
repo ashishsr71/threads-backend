@@ -116,8 +116,14 @@ try {
     const users= await Follow.findOne({userId});
     const following= users.following;
     const posts= await Post.find({ userId: { $in: following } }).populate({path:"userId",select:'username userImg'}) .exec();
-    // console.log(posts)
-    res.status(200).json(posts);
+    const rePosts=await Repost.find({userId:{$in:following}}).populate({path:"postId",model:"Post"})
+    .populate({path:"userId",model:"User",select:"username userImg _id"}).lean();
+    const formatedReposts=rePosts.map(repost=>({
+        ...repost.postId,
+        type:repost.userId
+    }));
+   
+    res.status(200).json([...posts,...formatedReposts]);
 } catch (error) {
     res.status(500).json({msg:"internal error"})
 }
@@ -138,16 +144,22 @@ const getForOther=async(req,res)=>{
 
 
 const rePost= async(req,res)=>{
-    const postId=req.params.id;
+    const {postId}=req.params;
     const userId=req.userId;
     try {
-        const doesPostExist=await Post.findOne({postId});
+        // console.log(postId + "is this")
+        if(!postId){
+            return res.status(400).json({msg:"bad request"})
+        };
+        const doesPostExist=await Post.findOne({_id:postId});
+        // console.log(doesPostExist)
         if(!doesPostExist){
             return res.status(400).json({msg:"Bad request"});
         }
         const post=await Repost.create({postId,userId});
         res.status(200).json(post);
     } catch (error) {
+        console.log(error)
         res.status(500).json({msg:"Someting went wrong while posting"})
     }
     
