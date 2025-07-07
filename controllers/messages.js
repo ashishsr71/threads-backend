@@ -20,7 +20,7 @@ const socketId=getSocketId(reciepentId);
 // console.log(socketId)
 if(socketId){
   // console.log(' iam working')
-  conosole.log(socketId,message)
+  console.log(socketId,message)
     io.to(socketId).emit('message',message);
 };
 // await produceMessage(JSON.stringify(msg));
