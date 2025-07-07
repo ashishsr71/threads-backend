@@ -46,7 +46,7 @@ res.status(200).json({token,userId:doc._id,username:doc.username});
 
 } catch (error) {
     console.log(error)
-    res.status(500).json({message:'internal server error'})
+    res.status(500).json({message:error.message})
 }
 
 
