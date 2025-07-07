@@ -75,7 +75,7 @@ const timestamp= Math.round((new Date).getTime()/1000);
 
 });
 // api to serach users
-app.get('/search',auth,SearchUser);
+app.get('/search',SearchUser);
 
 
 
