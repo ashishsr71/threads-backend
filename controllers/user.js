@@ -17,8 +17,8 @@ try {
         return res.status(400).json({message:'use another username'});
      };
     
-
-    const hashedPassword= await bcrypt.hash(password,10)
+const salt = await bcrypt.genSalt(10);
+    const hashedPassword= await bcrypt.hash(password,salt)
     
     const doc = await User.create({
         username,email,password:hashedPassword
@@ -26,7 +26,7 @@ try {
     await Follow.create({followers:[],following:[],userId:doc._id,private:false,username:username});
    const token=  jwt.sign({userId:doc._id,username:doc.username},"jai baba sawath nath",{expiresIn:'1d'});
 //    res.cookie('access_token',token,{httpOnly:true,maxAge:24*60*60*1000,sameSite:"None",secure:true});
-const refreshToken=jwt.sign({userId:user._id,username:user.username},"jai baba sawath nath",{expiresIn:"5d"});   
+const refreshToken=jwt.sign({userId:doc._id,username:doc.username},"jai baba sawath nath",{expiresIn:"5d"});   
 res.cookie('access_token', token, {
     httpOnly: true,
     maxAge: 24 * 60 * 60 * 1000,
@@ -46,7 +46,7 @@ res.status(200).json({token,userId:doc._id,username:doc.username});
 
 } catch (error) {
     console.log(error)
-    res.status(500).json({message:'internal server error'})
+    res.status(500).json({message:error.message})
 }
 
 
