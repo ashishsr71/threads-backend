@@ -41,6 +41,7 @@ requiredArray.forEach(follower => {
 async function fetchConferences(id){
 const uData=await Follow.findOne({userId:id});
 const rooms=await Rooms.find({createdBy:{$in:uData.following},isActive:true});
+console.log(rooms[0])
 return rooms;
 }
 

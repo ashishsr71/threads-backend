@@ -116,14 +116,14 @@ try {
     const users= await Follow.findOne({userId});
     const following= users.following;
     const posts= await Post.find({ userId: { $in: following } }).populate({path:"userId",select:'username userImg'}) .exec();
-    const rePosts=await Repost.find({userId:{$in:following}}).populate({path:"postId",model:"Post"})
-    .populate({path:"userId",model:"User",select:"username userImg _id"}).lean();
+    const rePosts=await Repost.find({userId:{$in:following}}).populate({path:"postId",model:"Post"}).populate({path:"userId",model:"User",select:"username userImg _id"}).lean();
     const formatedReposts=rePosts.map(repost=>({
         ...repost.postId,
         type:repost.userId
     }));
-   
-    res.status(200).json([...posts,...formatedReposts]);
+//    console.log(posts.length)
+// console.log(formatedReposts)
+    res.status(200).json([...posts]);
 } catch (error) {
     res.status(500).json({msg:"internal error"})
 }

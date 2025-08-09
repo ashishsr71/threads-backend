@@ -215,7 +215,8 @@ app.post("/leave",auth,async(req,res)=>{
   };
   try {
     await client.deleteRoom(roomId);
-    await Rooms.deleteOne({_id:roomId});
+    const deletedRoom=await Rooms.deleteOne({_id:roomId});
+    // conosle.log(deletedRoom)
     res.status(200).json({msg:"room destroyed"})
   } catch (error) {
     console.log(error);
